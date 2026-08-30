@@ -33,9 +33,14 @@ Thumbs.db
 
 # Editor/IDE
 .vscode/*
-!.vscode/settings.json
-.idea/
-*.swp
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Docker
 docker-compose.override.yml
