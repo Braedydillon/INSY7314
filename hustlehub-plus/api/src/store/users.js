@@ -1,3 +1,8 @@
+/*
+ * Two hashtables are used to store users by email and by id.
+ * If a users email is changed the id will remain the same.
+*/
+
 // Create hashtable to store users by email
 const userByEmail = new Map();
 // Create hashtable to store users by id
