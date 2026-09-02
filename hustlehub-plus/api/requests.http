@@ -43,3 +43,60 @@ Content-Type: application/json
 
 ### Bad route - should be 404
 GET http://localhost:5000/api/auth/whereami
+
+
+### Login a new user
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "QwertyTest123!"
+}
+
+
+### Incorrect email for Login - should be 401
+POST  http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrongemail@email.com",
+  "password": "QwertyTest123!"
+}
+
+
+### Incorrect pasword for Login - should be 401
+POST  http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrongemail@email.com",
+  "password": "Wrongpassword123!"
+}
+
+
+### Missing email for Login - should be 401
+POST  http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "password": "QwertyTest123!"
+}
+
+
+### Missing pasword for Login - should be 401
+POST  http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrongemail@email.com"
+}
+
+### Not an email for Login - should be 401
+POST  http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrongemailemail.com",
+  "password": "QwertyTest123!"
+}

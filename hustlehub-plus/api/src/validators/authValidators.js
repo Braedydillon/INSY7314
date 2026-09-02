@@ -17,5 +17,14 @@ export const registerRules = [
 ]
 
 export const loginRules = [
-    // TODO
+
+    body('email')
+    .trim()
+    .notEmpty().withMessage('Please enter an email address').bail()
+    .isEmail().withMessage('Please enter in a valid email address')
+    .normalizeEmail(),
+
+    body('password')
+        .notEmpty().withMessage('Please enter a password').bail()
+        
 ]
