@@ -2,8 +2,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../config/env.js';
 import {getUserByEmail, createUser} from '../store/users.js';
-import { errorHandler } from '../middleware/errorHandler.js';
-
 
 function createToken(user){
     return jwt.sign(
@@ -50,7 +48,6 @@ export async function login (req, res){
 
         return res.status(401).json({error: 'Invalid email or password'});
     }
-
 
     const token = createToken(user);
 
