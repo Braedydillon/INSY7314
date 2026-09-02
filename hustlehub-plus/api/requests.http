@@ -100,3 +100,29 @@ Content-Type: application/json
   "email": "wrongemailemail.com",
   "password": "QwertyTest123!"
 }
+
+### ========= Check proteced route tests =========
+
+### Register the user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{ "email": "login.test@email.com", "password": "QwertyTest123!" }
+
+### Log the user in to get token
+# @name login
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{ "email": "login.test@email.com", "password": "QwertyTest123!" }
+
+### Get current user = should be 200
+GET http://localhost:5000/api/users/me
+Authorization: Bearer {{login.response.body.token}}
+
+### No token - should be 401
+GET http://localhost:5000/api/users/me
+
+### Wtong token - should be 401
+GET http://localhost:5000/api/users/me
+Authorization: Bearer very.much.fake.token
