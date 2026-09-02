@@ -1,0 +1,25 @@
+### Register a new user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Qwerty123!"
+}
+
+### Register again — should be 409
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Qwerty123!"
+}
+
+### Missing password — should be 400
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "nopassword@example.com"
+}
