@@ -16,21 +16,17 @@ function createToken(user){
 }
 
 export async function register(req, res){
-    try {
-        const {email, password } = req.body;
 
-        const existingUser = getUserByEmail(email);
-        if (existingUser) {
-            return res.status(409).json({ error: 'User already exists' });
-        }
+    const {email, password } = req.body;
 
-        const passwordHash = await bcrypt.hash(password, 12);
-        const user = createUser(email, passwordHash);
-
-        res.status(201).json({message: 'User created successfully', user: { id: user.id, email: user.email }});
-        
-    } catch (error) {
-        res.status(500).json({ error: 'Something went wrong' });
+    const existingUser = getUserByEmail(email);
+    if (existingUser) {
+        return res.status(409).json({ error: 'User already exists' });
     }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const user = createUser(email, passwordHash);
+
+    res.status(201).json({message: 'User created successfully', user: { id: user.id, email: user.email }});
        
 }

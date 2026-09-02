@@ -7,7 +7,7 @@ Content-Type: application/json
   "password": "QwertyTest123!"
 }
 
-### Register again — should be 409
+### Register again - should be 409
 POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
@@ -25,7 +25,7 @@ Content-Type: application/json
   "password": "weakpass"
 }
 
-### Missing password — should be 400
+### Missing password - should be 400
 POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
@@ -33,10 +33,13 @@ Content-Type: application/json
   "email": "nopassword@email.com"
 }
 
-### Missing email — should be 400
+### Missing email - should be 400
 POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
   "password": "NoEmailIncluded123!"
 }
+
+### Bad route - should be 404
+GET http://localhost:5000/api/auth/whereami
