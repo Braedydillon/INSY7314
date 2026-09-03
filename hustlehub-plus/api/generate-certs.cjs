@@ -40,8 +40,8 @@ if (!fs.existsSync(certsDir)) {
   fs.mkdirSync(certsDir, { recursive: true });
 }
 
-fs.writeFileSync(path.join(certsDir, 'key.pem'), pemKey);
+fs.writeFileSync(path.join(certsDir, 'localhost-key.pem'), pemKey);
 
-fs.writeFileSync(path.join(certsDir, 'cert.pem'), pemCert);
+fs.writeFileSync(path.join(certsDir, 'localhost-cert.pem'), pemCert);
 
 console.log('Real valid SSL certificates generated successfully via node-forge!');
