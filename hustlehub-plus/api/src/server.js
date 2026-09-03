@@ -1,12 +1,19 @@
-import fs from 'fs';
-import https from 'https';
-import app from './app.js';
-import config from './config/env.js';
+import fs from "fs";
+import https from "https";
+import app from "./app.js";
+import config from "./config/env.js";
 
+let options;
+
+try {
 const options = {
-  key: fs.readFileSync('./certs/key.pem'),
-  cert: fs.readFileSync('./certs/cert.pem'),
+  key: fs.readFileSync("./certs/key.pem"),
+  cert: fs.readFileSync("./certs/cert.pem")
 };
+}catch(err){
+console.warn("SSl certificates missing! ");
+process.exit(1);
+}
 
 https.createServer(options, app).listen(config.PORT, () => {
   console.log(`Server is running securely on https://localhost:${config.PORT}`);
