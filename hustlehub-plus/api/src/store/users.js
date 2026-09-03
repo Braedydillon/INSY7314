@@ -1,7 +1,7 @@
 /*
  * Two hashtables are used to store users by email and by id.
  * If a users email is changed the id will remain the same.
-*/
+ */
 
 // Create hashtable to store users by email
 const userByEmail = new Map();
@@ -12,22 +12,22 @@ let nextUserId = 1;
 
 // Store user in the hashtables by email and id
 export function createUser(email, passwordHash) {
-    const user = {
-        id: String(nextUserId++),
-        email: email.toLowerCase(),
-        passwordHash,
-    };
-    userByEmail.set(user.email, user);
-    userById.set(user.id, user);
-    return user;
+  const user = {
+    id: String(nextUserId++),
+    email: email.toLowerCase(),
+    passwordHash,
+  };
+  userByEmail.set(user.email, user);
+  userById.set(user.id, user);
+  return user;
 }
 
 // Retrieve user from hashtable by email
 export function getUserByEmail(email) {
-    return userByEmail.get(email.toLowerCase());
+  return userByEmail.get(email.toLowerCase());
 }
 
 // Retrieve user from hashtable by id
 export function getUserById(id) {
-    return userById.get(String(id));
+  return userById.get(String(id));
 }
