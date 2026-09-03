@@ -101,7 +101,7 @@ Content-Type: application/json
   "password": "QwertyTest123!"
 }
 
-### ========= Check proteced route tests =========
+### ========= Check protected route tests =========
 
 ### Register the user
 POST http://localhost:5000/api/auth/register
