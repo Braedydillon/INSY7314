@@ -1,5 +1,5 @@
 ### Register a new user
-POST http://localhost:5000/api/auth/register
+POST https://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### Register again - should be 409
-POST http://localhost:5000/api/auth/register
+POST https://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Password does not meet minimum requirements - should be 400
-POST http://localhost:5000/api/auth/register
+POST https://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
 }
 
 ### Missing password - should be 400
-POST http://localhost:5000/api/auth/register
+POST https://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
@@ -34,7 +34,7 @@ Content-Type: application/json
 }
 
 ### Missing email - should be 400
-POST http://localhost:5000/api/auth/register
+POST https://localhost:5000/api/auth/register
 Content-Type: application/json
 
 {
@@ -42,11 +42,11 @@ Content-Type: application/json
 }
 
 ### Bad route - should be 404
-GET http://localhost:5000/api/auth/whereami
+GET https://localhost:5000/api/auth/whereami
 
 
 ### Login a new user
-POST http://localhost:5000/api/auth/login
+POST https://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
@@ -56,7 +56,7 @@ Content-Type: application/json
 
 
 ### Incorrect email for Login - should be 401
-POST  http://localhost:5000/api/auth/login
+POST  https://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
@@ -66,7 +66,7 @@ Content-Type: application/json
 
 
 ### Incorrect pasword for Login - should be 401
-POST  http://localhost:5000/api/auth/login
+POST  https://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
@@ -76,7 +76,7 @@ Content-Type: application/json
 
 
 ### Missing email for Login - should be 401
-POST  http://localhost:5000/api/auth/login
+POST  https://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
@@ -85,7 +85,7 @@ Content-Type: application/json
 
 
 ### Missing pasword for Login - should be 401
-POST  http://localhost:5000/api/auth/login
+POST  https://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
@@ -93,7 +93,7 @@ Content-Type: application/json
 }
 
 ### Not an email for Login - should be 401
-POST  http://localhost:5000/api/auth/login
+POST  https://localhost:5000/api/auth/login
 Content-Type: application/json
 
 {
