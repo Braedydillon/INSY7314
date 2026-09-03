@@ -1,10 +1,12 @@
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import app from './app.js';
 import config from './config/env.js';
 
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const USE_HTTPS = process.env.USE_HTTPS === 'true';
