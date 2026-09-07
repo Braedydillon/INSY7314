@@ -76,6 +76,108 @@ Content-Type: application/json
 }
 
 Testing
+### Register a new user
+POST https://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "QwertyTest123!"
+}
+
+### Register again - should be 409
+POST https://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "QwertyTest123!"
+}
+
+### Password does not meet minimum requirements - should be 400
+POST https://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "weakpass"
+}
+
+### Missing password - should be 400
+POST https://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "nopassword@email.com"
+}
+
+### Missing email - should be 400
+POST https://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "password": "NoEmailIncluded123!"
+}
+
+### Bad route - should be 404
+GET https://localhost:5000/api/auth/whereami
+
+
+### Login a new user
+POST https://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "QwertyTest123!"
+}
+
+
+### Incorrect email for Login - should be 401
+POST  https://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrongemail@email.com",
+  "password": "QwertyTest123!"
+}
+
+
+### Incorrect pasword for Login - should be 401
+POST  https://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@email.com",
+  "password": "Wrongpassword123!"
+}
+
+
+### Missing email for Login - should be 401
+POST  https://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "password": "QwertyTest123!"
+}
+
+
+### Missing pasword for Login - should be 401
+POST  https://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrongemail@email.com"
+}
+
+### Not an email for Login - should be 401
+POST  https://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "wrongemailemail.com",
+  "password": "QwertyTest123!"
+}
 
 
 Scripts
