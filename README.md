@@ -6,9 +6,13 @@ In this repository, we have Part 1 the secure backend foundation – an API is u
 Intended Users 
 
 The final system will support
+
 Clients
+
 Freelancers 
+
 Admins
+
 At this stage of development, we have only added registration and login. 
 
 Tech Stack
@@ -69,8 +73,13 @@ Testing
 
 
 Scripts
+
 Command	Description
-npm run dev	Start server with auto-reload
-npm start	Start server normally
-Npm run certs	Generate local SSL certificates
+
+npm run dev	|Start server with auto-reload
+
+npm start|	Start server normally
+
+Npm run certs	|Generate local SSL certificates
+
 
