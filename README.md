@@ -43,6 +43,8 @@ Content-Type: application/json
   "email": "test@email.com",
   "password": "QwertyTest123!"
 }
+
+
 Example 2
 POST /api/auth/login
 Content-Type: application/json
