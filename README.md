@@ -18,11 +18,17 @@ At this stage of development, we have only added registration and login.
 Tech Stack
 
 Runtime: Node.js
+
 Framework: Express 5
+
 Authentication: JSON Web Tokens
+
 Password Hashing: bcrypt
+
 Validation: express-validator 
+
 TLS/SSL: node- forge
+
 Development tools: nodemon
 
 
