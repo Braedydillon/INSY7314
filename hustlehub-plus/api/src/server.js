@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 
 import app from './app.js';
 import config from './config/env.js';
+import { connectDB } from './config/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,6 +18,14 @@ if (USE_HTTPS) {
 
   const certPath =
     process.env.SSL_CERT_PATH || path.join(__dirname, '..', 'certs', 'localhost-cert.pem');
+
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error(`Couldnt connect to mongo db: ${error.message}`);
+    process.exit(1);
+  }
+
   try {
     const httpsOptions = {
       key: fs.readFileSync(keyPath),
