@@ -9,6 +9,7 @@ export const GIG_CATEGORIES = [
   'tutoring',
   'photography',
   'art',
+  'design',
   'videography',
   'other',
 ];
