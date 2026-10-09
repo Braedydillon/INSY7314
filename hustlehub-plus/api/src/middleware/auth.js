@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/env.js';
-import { getUserById } from '../store/users.js';
+import User from '../models/User.js';
 
-export function authenticate(req, res, next) {
+export async function authenticate(req, res, next) {
   const header = req.headers.authorization;
 
   if (!header || !header.startsWith('Bearer ')) {
@@ -11,16 +11,33 @@ export function authenticate(req, res, next) {
 
   const token = header.split(' ')[1]; // Extract the token leave 'Bearer '
 
+  if (!token){
+    return res.status(401).json({error: 'Authentication required'});
+  }
+
+  let decoded;
+
+   try {
+    decoded = jwt.verify(token, config.JWT_SECRET, {algorithms: ['HS256']});
+  } catch {
+    return res.status(401).json({error: 'Expired or invalid token.'});
+  }
+
+   if (!decoded || typeof decoded !== 'object' || typeof decoded.id !== 'string') {
+    return res.status(401).json({error: 'Invalid token.'});
+  }
+
   try {
-    const decoded = jwt.verify(token, config.JWT_SECRET);
-    const user = getUserById(decoded.id);
+    const user = await User.findById(decoded.id);
 
     if (!user) {
-      return res.status(401).json({ error: 'Expired or invalid token' });
+      return res.status(401).json({error: 'User no longer exists.'});
     }
-    req.user = { id: user.id, email: user.email };
+
+    req.user = {id: user.id, email: user.email, role: user.role};
+
     next();
   } catch (error) {
-    return res.status(401).json({ error: 'Expired or tampered token' });
+    next(error);
   }
 }
