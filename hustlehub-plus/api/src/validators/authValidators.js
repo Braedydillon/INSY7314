@@ -2,15 +2,17 @@ import { body } from 'express-validator';
 
 export const registerRules = [
   body('email')
-    .trim()
+    .isString()
     .notEmpty()
     .withMessage('Please enter an email address.')
     .bail()
+    .trim()
     .isEmail()
-    .withMessage('Valid email is required.')
+    .withMessage('Email format is invalid.')
     .normalizeEmail(),
 
   body('password')
+    .isString()
     .notEmpty()
     .withMessage('Please enter a password')
     .bail()
@@ -25,36 +27,35 @@ export const registerRules = [
       'Password must be 12 characters minimum and include 1 symbol, number, uppercase, and lowercase character'
     ),
 
-
   body('name')
     .isString()
     .withMessage('Please enter your first name')
     .bail()
     .trim()
-    .matches(/^[A-Za-z '-]{2,60}$/)
+    .matches(/^[A-Za-z '-]{1,50}$/)
     .withMessage('Please enter a valid name'),
-    
+
   body('surname')
-  .isString()
-  .withMessage('Please enter your surname')
-  .bail()
-  .trim()
-  .matches(/^[A-Za-z '-]{2,60}$/)
-  .withMessage('Please enter a valid surname'),
+    .isString()
+    .withMessage('Please enter your surname')
+    .bail()
+    .trim()
+    .matches(/^[A-Za-z '-]{1,50}$/)
+    .withMessage('Please enter a valid surname'),
 
   body('displayName')
-  .isString()
-  .withMessage('Please enter a display name')
-  .bail()
-  .trim()
-  .isLength({min: 2, max: 40})
-  .withMessage('Display name must be 2 to 40 characters'),
+    .isString()
+    .withMessage('Please enter a display name')
+    .bail()
+    .trim()
+    .isLength({ min: 1, max: 40 })
+    .withMessage('Display name must be 1 to 40 characters'),
 
   body('role')
-  .isString()
-  .bail()
-  .isIn(['client', 'freelancer'])
-  .withMessage('Role must be client or freelancer'),
+    .isString()
+    .bail()
+    .isIn(['client', 'freelancer'])
+    .withMessage('Role must be client or freelancer'),
 
   body('contactMethod')
     .optional()
@@ -63,11 +64,11 @@ export const registerRules = [
     .trim()
     .isLength({ max: 120 })
     .withMessage('Contact method cannot exceed 120 characters'),
-
 ];
 
 export const loginRules = [
   body('email')
+    .isString()
     .trim()
     .notEmpty()
     .withMessage('Please enter an email address')

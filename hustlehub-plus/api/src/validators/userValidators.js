@@ -1,4 +1,3 @@
-
 import { body } from 'express-validator';
 
 export const updateProfileRules = [
@@ -8,8 +7,8 @@ export const updateProfileRules = [
     .withMessage('Display name must be text.')
     .bail()
     .trim()
-    .isLength({ min: 2, max: 40 })
-    .withMessage('Display name must be 2 to 40 characters.'),
+    .isLength({ min: 1, max: 40 })
+    .withMessage('Display name must be 1 to 40 characters.'),
 
   body('contactMethod')
     .optional()
@@ -21,14 +20,13 @@ export const updateProfileRules = [
     .withMessage('Contact method cannot exceed 120 characters.'),
 
   body()
-    .custom(value =>
-      value &&
-      typeof value === 'object' &&
-      !Array.isArray(value) &&
-      Object.keys(value).length > 0 &&
-      Object.keys(value).every(key => ['displayName', 'contactMethod'].includes(key))
+    .custom(
+      (value) =>
+        value &&
+        typeof value === 'object' &&
+        !Array.isArray(value) &&
+        Object.keys(value).length > 0 &&
+        Object.keys(value).every((key) => ['displayName', 'contactMethod'].includes(key))
     )
-    .withMessage(
-      'Only displayName and contactMethod can be updated.'
-    )
+    .withMessage('Only displayName and contactMethod can be updated.'),
 ];

@@ -17,34 +17,41 @@ function createToken(user) {
   );
 }
 
-export async function register(req, res) {
-  try{
+export async function register(req, res, next) {
+  try {
     const { email, password, name, surname, displayName, role, contactMethod } = matchedData(req);
 
-    const existingUser = await User.findOne({email});
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(409).json({ error: 'User already exists' });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
-    const user = await User.create({email, passwordHash, name, surname, displayName, role, contactMethod: contactMethod || ''});
+    const user = await User.create({
+      email,
+      passwordHash,
+      name,
+      surname,
+      displayName,
+      role,
+      contactMethod: contactMethod || '',
+    });
 
-    return res.status(201).json({ message: 'User created successfully', user: user.toJSON()});
-
-  } catch (error){
-    if (error.code === 11000){
-      return res.statsus (409).json({ error: 'Email already registered'});
+    return res.status(201).json({ message: 'User created successfully', user: user.toJSON() });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ error: 'Email already registered' });
     }
     next(error);
   }
 }
 
 export async function login(req, res, next) {
-  try{
+  try {
     const { email, password } = matchedData(req);
 
-    const user = await User.findOne({email}).select('+passwordHash');
+    const user = await User.findOne({ email }).select('+passwordHash');
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
@@ -58,9 +65,8 @@ export async function login(req, res, next) {
 
     const token = createToken(user);
 
-    return res.status(200).json({ message: 'Login successful', token, user: user.toJSON()});
-  
-  } catch(error){
+    return res.status(200).json({ message: 'Login successful', token, user: user.toJSON() });
+  } catch (error) {
     next(error);
   }
 }
