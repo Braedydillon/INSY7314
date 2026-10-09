@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import {
   GIG_CATEGORIES,
   MIN_TIERS,
@@ -58,4 +58,18 @@ export const gigRules = [
       `Tier price must be a whole number of cents from ${MIN_TIER_PRICE_CENTS} to ${MAX_TIER_PRICE_CENTS}.`
     )
     .toInt(),
+];
+
+export const gigIdRule = [param('id').isMongoId().withMessage('Invalid gig id.')];
+
+export const browseRules = [
+  query('category').optional().isIn(GIG_CATEGORIES).withMessage('Please choose a valid category.'),
+  query('q')
+    .optional()
+    .isString()
+    .withMessage('Search must be text.')
+    .bail()
+    .trim()
+    .isLength({ max: 60 })
+    .withMessage('Search cannot exceed 60 characters.'),
 ];
