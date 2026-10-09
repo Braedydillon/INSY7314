@@ -1,19 +1,30 @@
-### Register a new user
-POST https://localhost:5000/api/auth/register
+@base = https://localhost:5000/api
+@password = QwertyTest123!
+
+### Register a new freelancer - should be 201 (401 if run again)
+POST {{base}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "test@email.com",
-  "password": "QwertyTest123!"
+  "email": "freelancer@test.com",
+  "password": "{{password}}",
+  "name": "Free",
+  "surname": "Lancer",
+  "displayName": "Lancer Designs",
+  "role": "freelancer"
 }
 
-### Register again - should be 409
-POST https://localhost:5000/api/auth/register
+### Register a client - should be 201 (401 if run again)
+POST {{base}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "test@email.com",
-  "password": "QwertyTest123!"
+  "email": "client@test.com",
+  "password": "{{password}}",
+  "name": "Cli",
+  "surname": "Ent",
+  "displayName": "Client",
+  "role": "client"
 }
 
 ### Password does not meet minimum requirements - should be 400
@@ -45,18 +56,22 @@ Content-Type: application/json
 GET https://localhost:5000/api/auth/whereami
 
 
-### Login a new user
-POST https://localhost:5000/api/auth/login
+### Login as freelancer - should be 200
+# @name freelancerLogin
+POST {{base}}/auth/login
 Content-Type: application/json
 
-{
-  "email": "test@email.com",
-  "password": "QwertyTest123!"
-}
+{ "email": "freelancer@test.com", "password": "{{password}}" }
 
+### Login as client - should be 200
+# @name clientLogin
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "client@test.com", "password": "{{password}}" }
 
 ### Incorrect email for Login - should be 401
-POST  https://localhost:5000/api/auth/login
+POST  {{base}}/auth/login
 Content-Type: application/json
 
 {
@@ -64,9 +79,8 @@ Content-Type: application/json
   "password": "QwertyTest123!"
 }
 
-
 ### Incorrect pasword for Login - should be 401
-POST  https://localhost:5000/api/auth/login
+POST  {{base}}/auth/login
 Content-Type: application/json
 
 {
@@ -126,3 +140,22 @@ GET https://localhost:5000/api/users/me
 ### Wtong token - should be 401
 GET https://localhost:5000/api/users/me
 Authorization: Bearer very.much.fake.token
+
+### Create a gig as the freelancer - should be 201
+POST {{base}}/gigs
+Content-Type: application/json
+Authorization: Bearer {{freelancerLogin.response.body.token}}
+
+{
+  "title": "Logo design",
+  "category": "design",
+  "description": "A logo or something idk",
+  "tiers": [
+    { "title": "Basic", "priceCents": 50000 },
+    { "title": "Premium", "description": "Three concepts", "priceCents": 120000 }
+  ]
+}
+
+### List freelancer's gigs - should be 200
+GET {{base}}/gigs/mygigs
+Authorization: Bearer {{freelancerLogin.response.body.token}}
