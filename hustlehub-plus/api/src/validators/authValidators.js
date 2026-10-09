@@ -24,6 +24,46 @@ export const registerRules = [
     .withMessage(
       'Password must be 12 characters minimum and include 1 symbol, number, uppercase, and lowercase character'
     ),
+
+
+  body('name')
+    .isString()
+    .withMessage('Please enter your first name')
+    .bail()
+    .trim()
+    .matches(/^[A-Za-z '-]{2,60}$/)
+    .withMessage('Please enter a valid name'),
+    
+  body('surname')
+  .isString()
+  .withMessage('Please enter your surname')
+  .bail()
+  .trim()
+  .matches(/^[A-Za-z '-]{2,60}$/)
+  .withMessage('Please enter a valid surname'),
+
+  body('displayName')
+  .isString()
+  .withMessage('Please enter a display name')
+  .bail()
+  .trim()
+  .isLength({min: 2, max: 40})
+  .withMessage('Display name must be 2 to 40 characters'),
+
+  body('role')
+  .isString()
+  .bail()
+  .isIn(['client', 'freelancer'])
+  .withMessage('Role must be client or freelancer'),
+
+  body('contactMethod')
+    .optional()
+    .isString()
+    .bail()
+    .trim()
+    .isLength({ max: 120 })
+    .withMessage('Contact method cannot exceed 120 characters'),
+
 ];
 
 export const loginRules = [
@@ -36,5 +76,10 @@ export const loginRules = [
     .withMessage('Please enter a valid email address')
     .normalizeEmail(),
 
-  body('password').notEmpty().withMessage('Please enter a password'),
+  body('password')
+    .isString()
+    .withMessage('Password is required')
+    .bail()
+    .notEmpty()
+    .withMessage('Password is required'),
 ];
