@@ -6,6 +6,7 @@ import { notFound } from './middleware/notFound.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import gigRoutes from './routes/gigRoutes.js';
 import bookingsRoutes from './routes/bookingRoutes.js';
+import incomeRoutes from './routes/incomeRoutes.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/bookings', bookingsRoutes);
+app.use('/api', incomeRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
