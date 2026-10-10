@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { matchedData } from 'express-validator';
 import config from '../config/env.js';
-import { getUserByEmail, createUser } from '../store/users.js';
 import User from '../models/User.js';
 
 function createToken(user) {

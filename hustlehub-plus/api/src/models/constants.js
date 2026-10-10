@@ -13,7 +13,7 @@ export const GIG_CATEGORIES = [
   'videography',
   'other',
 ];
-export const BOOKING_STATUSES = ['pending', 'confirmed', 'declined', 'cancelled'];
+export const BOOKING_STATUSES = ['pending', 'confirmed', 'completed', 'declined', 'cancelled'];
 export const TRANSACTION_TYPES = ['payment', 'refund'];
 
 // Constants related to gig tiers
