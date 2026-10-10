@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.use(authenticate);
 
-router.get('/income/me', authorise('freelancer'), getMyIncome);
-router.get('/transactions/mytransactions', authorise('client', 'freelancer'), getMyTransactions);
+router.get('/income', authorise('freelancer'), getMyIncome);
+router.get('/transactions', authorise('client', 'freelancer'), getMyTransactions);
 
 export default router;
