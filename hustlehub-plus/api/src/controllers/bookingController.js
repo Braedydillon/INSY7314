@@ -86,3 +86,83 @@ export async function getBooking(req, res, next) {
     next(error);
   }
 }
+
+async function changeStatus(req, res, next, { ownerField, from, to, refund }) {
+  try {
+    const requester = { _id: req.params.id, [ownerField]: req.user.id };
+
+    const before = await Booking.findOneAndUpdate(
+      { ...requester, status: { $in: from } },
+      { status: to }
+    );
+
+    if (!before) {
+      const exists = await Booking.findOne(requester);
+
+      if (!exists) {
+        return res.status(404).json({ error: 'Booking not found.' });
+      }
+
+      return res.status(409).json({ error: `This booking is already ${exists.status}.` });
+    }
+
+    let transaction = null;
+
+    if (refund) {
+      try {
+        transaction = await Transaction.create({
+          bookingId: before._id,
+          clientId: before.clientId,
+          freelancerId: before.freelancerId,
+          type: 'refund',
+          amountCents: -before.totalCents,
+        });
+      } catch (error) {
+        await Booking.updateOne({ _id: before._id }, { status: before.status });
+        throw error;
+      }
+    }
+
+    const booking = await Booking.findById(before._id);
+
+    return res.status(200).json({ booking, transaction });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export function acceptBooking(req, res, next) {
+  return changeStatus(req, res, next, {
+    ownerField: 'freelancerId',
+    from: ['pending'],
+    to: 'confirmed',
+    refund: false,
+  });
+}
+
+export function completeBooking(req, res, next) {
+  return changeStatus(req, res, next, {
+    ownerField: 'freelancerId',
+    from: ['confirmed'],
+    to: 'completed',
+    refund: false,
+  });
+}
+
+export function declineBooking(req, res, next) {
+  return changeStatus(req, res, next, {
+    ownerField: 'freelancerId',
+    from: ['pending'],
+    to: 'declined',
+    refund: true,
+  });
+}
+
+export function cancelBooking(req, res, next) {
+  return changeStatus(req, res, next, {
+    ownerField: 'clientId',
+    from: ['pending', 'confirmed'],
+    to: 'cancelled',
+    refund: true,
+  });
+}
