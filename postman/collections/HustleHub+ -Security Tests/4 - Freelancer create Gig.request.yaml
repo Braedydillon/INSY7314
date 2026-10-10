@@ -1,0 +1,69 @@
+$kind: http-request
+url: https://localhost:5000/api/gigs
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"title\": \"Lane B Automated Test Gig\",\r
+
+    \  \"category\": \"design\",\r
+
+    \  \"description\": \"A test gig created to verify freelancer permissions.\",\r
+
+    \  \"tiers\": [\r
+
+    \    {\r
+
+    \      \"title\": \"Basic Package\",\r
+
+    \      \"description\": \"A basic website design package.\",\r
+
+    \      \"priceCents\": 50000\r
+
+    \    }\r
+
+    \  ]\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancerToken}}"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      pm.test(\"Freelancer can create a gig - 201 Created\", function () {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Created gig belongs to freelancer\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.gig).to.be.an(\"object\");\r
+
+      \    pm.expect(response.gig.title).to.eql(\"Lane B Automated Test Gig\");\r
+
+      \    pm.expect(response.gig.freelancerId).to.be.a(\"string\");\r
+
+      });\r
+
+      \r
+
+      if (pm.response.code === 201) {\r
+
+      \    const response = pm.response.json();\r
+
+      \    pm.collectionVariables.set(\"createdGigId\", response.gig.id);\r
+
+      }\r\n"
+    language: text/javascript
+order: 4000

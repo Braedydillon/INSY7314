@@ -1,0 +1,691 @@
+{
+  "info": {
+    "name": "HustleHub+ - Security Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Register client",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/auth/register",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"RBAC Test Client\",\r\n  \"surname\": \"Tester\",\r\n  \"displayName\": \"RBAC Client\",\r\n  \"email\": \"rbac.client@test.com\",\r\n  \"password\": \"TestPassword123!\",\r\n  \"role\": \"client\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Client registration succeeds or account already exists\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);",
+              "});",
+              "",
+              "pm.test(\"Client registration returns an expected response\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    if (pm.response.code === 200 || pm.response.code === 201) {",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    } else {",
+              "        pm.expect(response.error).to.be.a(\"string\");",
+              "",
+              "        const error = response.error.toLowerCase();",
+              "",
+              "        pm.expect(",
+              "            error.includes(\"already\") ||",
+              "            error.includes(\"exist\") ||",
+              "            error.includes(\"duplicate\")",
+              "        ).to.be.true;",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "00.1 Register freelancer",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/auth/register",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"RBAC\",\r\n  \"surname\": \"Freelancer\",\r\n  \"displayName\": \"RBAC Freelancer A\",\r\n  \"email\": \"rbac.freelancer@test.com\",\r\n  \"password\": \"TestPassword123!\",\r\n  \"role\": \"freelancer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Freelancer registration succeeds or account already exists\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);",
+              "});",
+              "",
+              "pm.test(\"Freelancer registration returns an expected response\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    if ([200, 201].includes(pm.response.code)) {",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    } else {",
+              "        const message = response.error || response.message || \"\";",
+              "",
+              "        pm.expect(message).to.be.a(\"string\").and.not.empty;",
+              "        pm.expect(message.toLowerCase()).to.match(/already|exist|duplicate/);",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "00.2 - Register second freelancer",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/auth/register",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"RBAC\",\r\n  \"surname\": \"Freelancer\",\r\n  \"displayName\": \"RBAC Freelancer B\",\r\n  \"email\": \"rbac.freelancer2@test.com\",\r\n  \"password\": \"TestPassword123!\",\r\n  \"role\": \"freelancer\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Second freelancer registration succeeds or account already exists\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);",
+              "});",
+              "",
+              "pm.test(\"Second freelancer registration returns an expected response\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    if ([200, 201].includes(pm.response.code)) {",
+              "        pm.expect(response).to.be.an(\"object\");",
+              "    } else {",
+              "        const message = response.error || response.message || \"\";",
+              "",
+              "        pm.expect(message).to.be.a(\"string\").and.not.empty;",
+              "        pm.expect(message.toLowerCase()).to.match(/already|exist|duplicate/);",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0 - Login as Client",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/auth/login",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"rbac.client@test.com\",\r\n  \"password\": \"TestPassword123!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Client login succeeds - 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Client login returns a JWT\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.collectionVariables.set(\"clientToken\", response.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0.1 - Login as freelancer",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/auth/login",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"rbac.freelancer@test.com\",\r\n  \"password\": \"TestPassword123!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Freelancer login succeeds - 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Freelancer login returns a JWT\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.collectionVariables.set(\"freelancerToken\", response.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "0.2 - Login as second freelancer",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/auth/login",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"rbac.freelancer2@test.com\",\r\n  \"password\": \"TestPassword123!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Second freelancer login succeeds - 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Second freelancer login returns a JWT\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+              "});",
+              "",
+              "if (pm.response.code === 200) {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.collectionVariables.set(\"freelancer2Token\", response.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 - Public gig browsing-1",
+      "request": {
+        "method": "GET",
+        "url": "https://localhost:5000/api/gigs",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Public gigs endpoint returns 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response contains a gigs array\", function () {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.gigs).to.be.an(\"array\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 - Client cannot create gig",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/gigs",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{clientToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Client cannot create a gig - 403 Forbidden\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});",
+              "",
+              "pm.test(\"Response contains permission error\", function () {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.error).to.be.a(\"string\");",
+              "    pm.expect(response.error.toLowerCase()).to.include(\"permission denied\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Gig requires authentication-1",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/gigs",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Creating a gig without JWT returns 401\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"Response contains authentication error\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.expect(response.error).to.be.a(\"string\");",
+              "    pm.expect(response.error.toLowerCase()).to.include(\"required\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 - Freelancer create Gig",
+      "request": {
+        "method": "POST",
+        "url": "https://localhost:5000/api/gigs",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Lane B Automated Test Gig\",\r\n  \"category\": \"design\",\r\n  \"description\": \"A test gig created to verify freelancer permissions.\",\r\n  \"tiers\": [\r\n    {\r\n      \"title\": \"Basic Package\",\r\n      \"description\": \"A basic website design package.\",\r\n      \"priceCents\": 50000\r\n    }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{freelancerToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Freelancer can create a gig - 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"Created gig belongs to freelancer\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.expect(response.gig).to.be.an(\"object\");",
+              "    pm.expect(response.gig.title).to.eql(\"Lane B Automated Test Gig\");",
+              "    pm.expect(response.gig.freelancerId).to.be.a(\"string\");",
+              "});",
+              "",
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set(\"createdGigId\", response.gig.id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5 - Freelancer views own gigs",
+      "request": {
+        "method": "GET",
+        "url": "https://localhost:5000/api/gigs/mygigs",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{freelancerToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Freelancer can view own gigs - 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Created gig appears in freelancer's gigs\", function () {",
+              "    const response = pm.response.json();",
+              "    const gigId = pm.collectionVariables.get(\"createdGigId\");",
+              "",
+              "    pm.expect(response.gigs).to.be.an(\"array\");",
+              "    pm.expect(gigId, \"Created gig ID must be saved\").to.be.a(\"string\");",
+              "",
+              "    const gig = response.gigs.find(g => g.id === gigId);",
+              "",
+              "    pm.expect(gig, \"Created gig should appear in own gigs\").to.exist;",
+              "    pm.expect(gig.title).to.eql(\"Lane B Automated Test Gig\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6 - Freelancer cannot edit another gig",
+      "request": {
+        "method": "PUT",
+        "url": "https://localhost:5000/api/gigs/{{createdGigId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"title\": \"Unauthorized Gig Update\",\r\n  \"category\": \"design\",\r\n  \"description\": \"Attempting to update a gig belonging to another freelancer.\",\r\n  \"tiers\": [\r\n    {\r\n      \"title\": \"Basic Package\",\r\n      \"description\": \"A basic website design package.\",\r\n      \"priceCents\": 50000\r\n    }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{freelancer2Token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Freelancer cannot edit another user's gig\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "",
+              "pm.test(\"Response indicates gig was not found\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.expect(response.error).to.eql(\"Gig not found.\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7 - Freelancer can edit own gig",
+      "request": {
+        "method": "PUT",
+        "url": "https://localhost:5000/api/gigs/{{createdGigId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"title\": \"Updated Lane B Test Gig\",\r\n  \"category\": \"design\",\r\n  \"description\": \"Updated by the freelancer who owns this gig.\",\r\n  \"tiers\": [\r\n    {\r\n      \"title\": \"Basic Package\",\r\n      \"description\": \"A basic website design package.\",\r\n      \"priceCents\": 50000\r\n    }\r\n  ]\r\n}\r\n  ",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{freelancerToken}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "",
+              "pm.test(\"Freelancer can edit own gig - 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Gig title was successfully updated\", function () {",
+              "    const response = pm.response.json();",
+              "",
+              "    pm.expect(response.gig).to.be.an(\"object\");",
+              "    pm.expect(response.gig.title).to.eql(\"Updated Lane B Test Gig\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "clientToken",
+      "value": ""
+    },
+    {
+      "key": "freelancerToken",
+      "value": ""
+    },
+    {
+      "key": "freelancer2Token",
+      "value": ""
+    },
+    {
+      "key": "createdGigId",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+$kind: http-request
+url: https://localhost:5000/api/gigs/{{createdGigId}}
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"title\": \"Unauthorized Gig Update\",\r
+
+    \  \"category\": \"design\",\r
+
+    \  \"description\": \"Attempting to update a gig belonging to another freelancer.\",\r
+
+    \  \"tiers\": [\r
+
+    \    {\r
+
+    \      \"title\": \"Basic Package\",\r
+
+    \      \"description\": \"A basic website design package.\",\r
+
+    \      \"priceCents\": 50000\r
+
+    \    }\r
+
+    \  ]\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancer2Token}}"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      pm.test(\"Freelancer cannot edit another user's gig\", function () {\r
+
+      \    pm.response.to.have.status(404);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response indicates gig was not found\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.error).to.eql(\"Gig not found.\");\r
+
+      });\r\n"
+    language: text/javascript
+order: 6000

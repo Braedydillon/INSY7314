@@ -1,0 +1,14 @@
+$kind: collection
+variables:
+  - key: clientToken
+    secret: true
+    disabled: false
+  - key: freelancerToken
+    secret: true
+    disabled: false
+  - key: createdGigId
+    value: ""
+    disabled: false
+  - key: freelancer2Token
+    secret: true
+    disabled: false

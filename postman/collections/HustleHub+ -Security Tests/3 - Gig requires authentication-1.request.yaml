@@ -1,0 +1,34 @@
+$kind: http-request
+name: 3 - Gig requires authentication
+url: https://localhost:5000/api/gigs
+method: POST
+body:
+  type: json
+  content: "{}"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      pm.test(\"Creating a gig without JWT returns 401\", function () {\r
+
+      \    pm.response.to.have.status(401);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response contains authentication error\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.error).to.be.a(\"string\");\r
+
+      \    pm.expect(response.error.toLowerCase()).to.include(\"required\");\r
+
+      });\r\n"
+    language: text/javascript
+order: 3000
