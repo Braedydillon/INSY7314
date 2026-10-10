@@ -7,21 +7,17 @@ export async function createBooking(req, res, next) {
   try {
     const { gigId, tierId } = matchedData(req, { locations: ['body'] });
 
-    if (!gigId) {
-      return res.status(404).json({ message: 'Gig not found' });
-    }
-
-    const gig = await Gig.findById(gigId);
+    const gig = await Gig.findOne({ _id: gigId, status: 'active' });
     if (!gig) {
-      return res.status(404).json({ message: 'Gig not found' });
+      return res.status(404).json({ error: 'Gig not found' });
     }
 
     const tier = gig.tiers.id(tierId);
     if (!tier) {
-      return res.status(404).json({ message: 'Tier not found' });
+      return res.status(404).json({ error: 'Tier not found' });
     }
 
-    const booking = new Booking({
+    const booking = await Booking.create({
       gigId: gig._id,
       tierId: tier._id,
       clientId: req.user.id,
@@ -41,7 +37,7 @@ export async function createBooking(req, res, next) {
       });
     } catch (error) {
       await Booking.deleteOne({ _id: booking._id });
-      return res.status(402).json({ message: 'Payment failed', error: error.message });
+      throw error;
     }
 
     return res.status(201).json({ booking, transaction: payment });
@@ -53,7 +49,7 @@ export async function createBooking(req, res, next) {
 export async function getMyBookings(req, res, next) {
   try {
     const filter =
-      req.user.role === 'freelancer' ? { clientId: req.user.id } : { freelancerId: req.user.id };
+      req.user.role === 'client' ? { clientId: req.user.id } : { freelancerId: req.user.id };
 
     const bookings = await Booking.find(filter)
       .sort({ createdAt: -1 })
@@ -69,7 +65,7 @@ export async function getMyBookings(req, res, next) {
 
 export async function getBooking(req, res, next) {
   try {
-    const booking = await Booking.findOne(req.params.Id)
+    const booking = await Booking.findById(req.params.id)
       .populate('gigId', 'title')
       .populate('clientId', 'displayName contactMethod')
       .populate('freelancerId', 'displayName contactMethod');
@@ -77,7 +73,7 @@ export async function getBooking(req, res, next) {
     const isInvolved =
       booking && (booking.clientId.id === req.user.id || booking.freelancerId.id === req.user.id);
 
-    if (!booking || !isInvolved) {
+    if (!booking || (!isInvolved && req.user.role !== 'admin')) {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
