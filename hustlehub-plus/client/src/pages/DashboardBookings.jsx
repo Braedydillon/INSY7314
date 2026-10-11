@@ -66,7 +66,7 @@ export default function DashboardBookings() {
       <PageHeading
         eyebrow="FREELANCER DASHBOARD"
         title="Booking Requests"
-        subtitle="Accept or decline requests from clients."
+        subtitle="Accept, decline, and review requests from clients."
       />
 
       <Alert error={error} />
@@ -92,12 +92,6 @@ export default function DashboardBookings() {
                   {dateText(booking.createdAt)}
                 </p>
                 <small>{booking.clientId?.contactMethod || ""}</small>
-
-                <small>
-                  {booking.client?.contactMethod ||
-                    booking.clientContactMethod ||
-                    ""}
-                </small>
               </div>
 
               <strong>{money(booking.totalCents)}</strong>
