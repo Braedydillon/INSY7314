@@ -1,71 +1,63 @@
-
-import { useEffect, useState } from 'react'
-import { api, routes } from '../services/api.js'
+import { useEffect, useState } from "react";
+import { api, routes } from "../services/api.js";
 import {
   PageHeading,
   Loading,
   Empty,
   Alert,
-  Status
-} from '../components/UI.jsx'
-import {
-  listOf,
-  idOf,
-  money,
-  dateText
-} from '../utils/format.js'
+  Status,
+} from "../components/UI.jsx";
+import { listOf, idOf, money, dateText } from "../utils/format.js";
 
 export default function DashboardBookings() {
-  const [bookings, setBookings] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [busy, setBusy] = useState('')
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [busy, setBusy] = useState("");
 
   async function refresh() {
-    const data = await api.get(routes.myBookings)
-    setBookings(listOf(data, 'bookings'))
+    const data = await api.get(routes.myBookings);
+    setBookings(listOf(data, "bookings"));
   }
 
   useEffect(() => {
-    let active = true
+    let active = true;
 
-    api.get(routes.myBookings)
-      .then(data => {
+    api
+      .get(routes.myBookings)
+      .then((data) => {
         if (active) {
-          setBookings(listOf(data, 'bookings'))
+          setBookings(listOf(data, "bookings"));
         }
       })
-      .catch(err => {
-        if (active) setError(err)
+      .catch((err) => {
+        if (active) setError(err);
       })
       .finally(() => {
-        if (active) setLoading(false)
-      })
+        if (active) setLoading(false);
+      });
 
     return () => {
-      active = false
-    }
-  }, [])
+      active = false;
+    };
+  }, []);
 
   async function changeStatus(booking, action) {
-    const id = idOf(booking)
+    const id = idOf(booking);
 
-    if (busy) return
+    if (busy) return;
 
-    setBusy(id)
-    setError(null)
+    setBusy(id);
+    setError(null);
 
     try {
-      await api.patch(
-        `${routes.bookings}/${id}/${action}`,
-        {}
-      )
+      await api.patch(`${routes.bookings}/${id}/${action}`, {});
 
-      await refresh()
+      await refresh();
     } catch (err) {
-      setError(err)
+      setError(err);
     } finally {
-      setBusy('')
+      setBusy("");
     }
   }
 
@@ -87,59 +79,62 @@ export default function DashboardBookings() {
         </Empty>
       ) : (
         <div className="stack-list">
-          {bookings.map(booking => (
-            <div
-              className="booking-row"
-              key={idOf(booking)}
-            >
-              <div className="booking-icon">✦</div>
-
+          {bookings.map((booking) => (
+            <div className="booking-row" key={idOf(booking)}>
               <div className="booking-main">
                 <strong>
-                  {booking.gig?.title ||
-                    booking.tierTitle ||
-                    'Booking Request'}
+                  {booking.gigId?.title || "Booking Request"}
+                  {" - "}
+                  {booking.tierTitle}
                 </strong>
-
-                <p>{dateText(booking.createdAt)}</p>
+                <p>
+                  {booking.clientId?.displayName} ·{" "}
+                  {dateText(booking.createdAt)}
+                </p>
+                <small>{booking.clientId?.contactMethod || ""}</small>
 
                 <small>
                   {booking.client?.contactMethod ||
                     booking.clientContactMethod ||
-                    ''}
+                    ""}
                 </small>
               </div>
 
-              <strong>
-                {money(booking.totalCents)}
-              </strong>
+              <strong>{money(booking.totalCents)}</strong>
 
               <Status value={booking.status} />
 
-              {booking.status === 'pending' && (
+              {booking.status === "pending" && (
                 <div className="row-actions">
                   <button
                     type="button"
                     className="btn btn-primary btn-sm"
                     disabled={Boolean(busy)}
-                    onClick={() =>
-                      changeStatus(booking, 'accept')
-                    }
+                    onClick={() => changeStatus(booking, "accept")}
                   >
-                    {busy === idOf(booking)
-                      ? 'Saving...'
-                      : 'Accept'}
+                    {busy === idOf(booking) ? "Saving..." : "Accept"}
                   </button>
 
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
                     disabled={Boolean(busy)}
-                    onClick={() =>
-                      changeStatus(booking, 'decline')
-                    }
+                    onClick={() => changeStatus(booking, "decline")}
                   >
                     Decline
+                  </button>
+                </div>
+              )}
+
+              {booking.status === "confirmed" && (
+                <div className="row-actions">
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    disabled={Boolean(busy)}
+                    onClick={() => changeStatus(booking, "complete")}
+                  >
+                    {busy === idOf(booking) ? "Saving..." : "Mark complete"}
                   </button>
                 </div>
               )}
@@ -148,5 +143,5 @@ export default function DashboardBookings() {
         </div>
       )}
     </section>
-  )
+  );
 }
