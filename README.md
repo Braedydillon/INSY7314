@@ -33,6 +33,7 @@ Development tools: nodemon
 
 
 Frontend
+
 The frontend used in this application provides a view for the clients, freelancers and administrators.
 The frontend is designed using React and Vite and that communicates with the Node.js and Express backend through the Rest API requests.
 Frontend features:
@@ -40,6 +41,7 @@ Authentication:
 The frontend allows the users to register and login using there email address and password. The frontend communicates with the backend authentication API and uses JWT authentication for protected requests.
 
 Client Features:
+
 Can browse the currrent services that are available.
 Can view descriptions of the gig and pricing packages.
 They can book services offered by freelances once they login.
@@ -48,6 +50,7 @@ view their transactions.
 Manage their own profile information.
 
 Freelancers Features:
+
 Create and manage service listings.
 Change their gigs information.
 See when clients request services and bookings.
@@ -55,7 +58,8 @@ Manage the bookings.
 View income information.
 Manage profile information
 
-Administration Features
+Administration Features:
+
 The frontend has a administration dashboard intended for viewing and managing platform information. Administration functionality depends on the corresponding protected backend endpoints. 
 
 Security Decisions
