@@ -78,9 +78,8 @@ export async function updateGig(req, res, next) {
       return res.status(404).json({ error: 'Gig not found.' });
     }
 
-    // Dont expose that gig the gig exists to other users if they are not the owner
     if (gig.freelancerId.toString() !== req.user.id) {
-      return res.status(404).json({ error: 'Gig not found.' });
+      return res.status(403).json({ error: 'Permission denied.' });
     }
 
     const { title, category, description, tiers } = matchedData(req, { locations: ['body'] });
@@ -105,7 +104,7 @@ export async function deleteGig(req, res, next) {
     const isAdmin = req.user.role === 'admin';
 
     if (!isOwner && !isAdmin) {
-      return res.status(403).json({ error: 'You do not have permission to do this.' });
+      return res.status(403).json({ error: 'Permission denied.' });
     }
 
     // Soft delete: marked as removed to prevent orphaned bookings
