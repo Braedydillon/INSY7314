@@ -21,4 +21,10 @@ export default {
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1h',
   MONGODB_URI: MONGODB_URI,
+  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+
+  RATE_LIMIT_WINDOW_MINUTES: Number(process.env.RATE_LIMIT_WINDOW_MINUTES ?? 15),
+  LOGIN_RATE_LIMIT: Number(process.env.LOGIN_RATE_LIMIT ?? 10),
+  REGISTER_RATE_LIMIT: Number(process.env.REGISTER_RATE_LIMIT ?? 20),
+  BOOKING_RATE_LIMIT: Number(process.env.BOOKING_RATE_LIMIT ?? 20),
 };

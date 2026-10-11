@@ -12,7 +12,7 @@ export const updateProfileRules = [
     .isLength({ min: 1, max: 40 })
     .withMessage('Display name must be 1 to 40 characters.'),
 
-  stripHtml('displayName'),
+  stripHtml('contactMethod'),
   body('contactMethod')
     .optional()
     .isString()

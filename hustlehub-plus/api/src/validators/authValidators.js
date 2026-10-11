@@ -61,6 +61,7 @@ export const registerRules = [
     .isIn(['client', 'freelancer'])
     .withMessage('Role must be client or freelancer'),
 
+  stripHtml('contactMethod'),
   body('contactMethod')
     .optional()
     .isString()

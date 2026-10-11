@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { matchedData } from 'express-validator';
 import Gig from '../models/Gig.js';
 import Booking from '../models/Booking.js';
@@ -88,7 +89,10 @@ async function changeStatus(req, res, next, { ownerField, from, to, refund }) {
     const requester = { _id: req.params.id, [ownerField]: req.user.id };
 
     const before = await Booking.findOneAndUpdate(
-      { ...requester, status: { $in: from } },
+      {
+        ...requester,
+        status: mongoose.trusted({ $in: from })
+      },
       { status: to }
     );
 

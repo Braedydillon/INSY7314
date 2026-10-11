@@ -6,13 +6,13 @@ export async function authenticate(req, res, next) {
   const header = req.headers.authorization;
 
   if (!header || !header.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Authenticaton required.' });
+    return res.status(401).json({ error: 'Authentication required.' });
   }
 
   const token = header.split(' ')[1]; // Extract the token leave 'Bearer '
 
   if (!token){
-    return res.status(401).json({error: 'Authentication required'});
+    return res.status(401).json({ error: 'Authentication required.' });
   }
 
   let decoded;

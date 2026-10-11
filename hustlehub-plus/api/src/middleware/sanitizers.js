@@ -10,5 +10,5 @@ export const stripHtml = (field) =>
     return sanitizeHtml(value, {
       allowedTags: [],
       allowedAttributes: {},
-    });
-  });
+    }).replace(/&amp;/g, '&');
+});
