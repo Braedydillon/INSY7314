@@ -1,6 +1,8 @@
 import { body } from 'express-validator';
+import { stripHtml } from '../middleware/sanitizers.js';
 
 export const updateProfileRules = [
+  stripHtml('displayName'),
   body('displayName')
     .optional()
     .isString()
@@ -10,6 +12,7 @@ export const updateProfileRules = [
     .isLength({ min: 1, max: 40 })
     .withMessage('Display name must be 1 to 40 characters.'),
 
+  stripHtml('displayName'),
   body('contactMethod')
     .optional()
     .isString()

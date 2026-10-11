@@ -8,6 +8,10 @@ if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET is not defined in the environment variables, check your .env file');
 }
 
+if (Buffer.byteLength(process.env.JWT_SECRET, 'utf8') < 32) {
+  throw new Error('JWT_SECRET must be at least 32 bytes long')
+}
+
 if (process.env.PORT && isNaN(Number(process.env.PORT))) {
   throw new Error('PORT must be a number, check your .env file');
 }

@@ -1,4 +1,5 @@
 import { body, param, query } from 'express-validator';
+import { stripHtml } from '../middleware/sanitizers.js';
 import {
   GIG_CATEGORIES,
   MIN_TIERS,
@@ -8,6 +9,7 @@ import {
 } from '../models/constants.js';
 
 export const gigRules = [
+  stripHtml('title'),
   body('title')
     .isString()
     .withMessage('Please enter a title.')
@@ -23,6 +25,7 @@ export const gigRules = [
     .isIn(GIG_CATEGORIES)
     .withMessage('Please choose a valid category.'),
 
+  stripHtml('tiers.*.description'),
   body('description')
     .isString()
     .withMessage('Please enter a description.')
