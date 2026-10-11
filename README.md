@@ -217,6 +217,137 @@ Content-Type: application/json
 }
 
 
+API security Testing (Postman and Newman)
+The HustleHub+ backend includes an automated API security testing suite using Postman and Newman. The tests verify authentication, authorisation, role-based access control, input validation, and access restrictions across the application.
+
+
+Tests covered
+Client and freelancer registration and login
+
+JWT-based authentication and protected API endpoints
+
+Public access to gig listings
+
+Role-based access control (RBAC)
+
+Freelancer gig creation, retrieval, and editing permissions
+
+Prevention of unauthorised gig creation and modification
+
+Client booking creation and booking access restrictions
+
+Booking lifecycle operations, including acceptance, completion, cancellation, and rejection
+
+Prevention of accessing or modifying another user's bookings
+
+Admin authentication and access restrictions
+
+User profile retrieval and updates
+
+Prevention of unauthorised role changes
+
+Invalid booking ID validation
+
+HTML input sanitisation
+
+Login rate limiting (tested separately)
+
+
+Prerequisites:
+Node.js and npm
+
+MongoDB running and connected
+
+HustleHub+ backend running at https://localhost:5000
+
+A valid local admin account for the admin authentication tests
+
+
+Installation
+
+cd hustlehub-plus/api    npm install   | Navigate to the backend API directory:
+Newman and the YAML parser are included as development dependencies
+
+Configuring Admin Credentials
+
+Create a file named newman.local.json inside hustlehub-plus/api:
+{
+  "name": "HustleHub Local",
+  "values": [
+    {
+      "key": "adminEmail",
+      "value": "YOUR_ADMIN_EMAIL",
+      "enabled": true
+    },
+    {
+      "key": "adminPassword",
+      "value": "YOUR_ADMIN_PASSWORD",
+      "enabled": true
+    }
+  ]
+}
+
+Replace the placeholder values with credentials for an existing admin account.
+Security: The newman.local.json file 
+
+
+Running the Security Tests
+npm run test:api -- --environment newman.local.json | From the hustlehub-plus/api directory, run
+
+The test script runs Newman against the Postman collection using the --insecure option to support the local development HTTPS certificate.
+
+
+Regenerating the Postman Collection
+The test collection is maintained using YAML request files and converted into a Newman-compatible JSON collection.
+
+
+node scripts/convert-postman.mjs | From the API directory, run
+
+This regenerates:
+
+postman/HustleHub-Security-Tests.postman_collection.json
+
+After regenerating the collection, run the automated tests again to verify the results.
+
+Test Results
+
+The automated API security suite was successfully executed:
+
+Metric                                      Result
+
+Requests executed                            38
+
+Test scripts executed                        38
+
+Assertions executed                          81
+
+Failed requests                               0
+
+Failed assertions                             0
+
+Overall result                                PASS
+
+
+The login rate-limiting test is maintained separately from the main automated collection to prevent repeated login attempts from temporarily blocking the remaining authentication tests.
+
+Registration tests support repeated execution with existing test accounts, reducing the need for manual database resets.
+
+Security Considerations:
+Authentication is verified using JWT bearer tokens.
+
+Protected endpoints reject unauthenticated requests.
+
+Role-based permissions restrict access to sensitive operations.
+
+Users are prevented from modifying resources they do not own.
+
+Sensitive credentials are stored in local, Git-ignored configuration files.
+
+Generated Newman reports may contain authentication tokens or test credentials and should not be committed to public repositories.
+
+
+
+
 Scripts
 
 Command	Description
