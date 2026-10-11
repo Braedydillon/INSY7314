@@ -86,6 +86,13 @@ The base path is /api/auth
 Post	/register	Register a new user
 Post	/login	Log in and receive a JWT
 
+Setting up the Front end
+1. cd hustlehub-plus/client
+2. npm install
+3. npm run dev
+Once these steps are complete the frontend runs at http://localhost:5173
+
+
 Example 1
 POST /api/auth/register
 Content-Type: application/json
