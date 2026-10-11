@@ -22,7 +22,7 @@ export async function updateMe(req, res, next) {
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $set: updates },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!user) {

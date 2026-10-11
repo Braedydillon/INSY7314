@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from './env.js';
 
 mongoose.set('strictQuery', true);
+mongoose.set('sanitizeFilter', true);
 
 export async function connectDB(uri = config.MONGODB_URI) {
   await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });

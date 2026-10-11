@@ -1,0 +1,5 @@
+.postman/resources.yaml
+
+# Local Postman test data
+postman/HustleHub-Newman-Report.json
+postman/globals/workspace.globals.yaml

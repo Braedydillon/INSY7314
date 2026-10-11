@@ -1,4 +1,5 @@
 import { body } from 'express-validator';
+import { stripHtml } from '../middleware/sanitizers.js';
 
 export const registerRules = [
   body('email')
@@ -27,6 +28,7 @@ export const registerRules = [
       'Password must be 12 characters minimum and include 1 symbol, number, uppercase, and lowercase character'
     ),
 
+  stripHtml('name'),
   body('name')
     .isString()
     .withMessage('Please enter your first name')
@@ -35,6 +37,7 @@ export const registerRules = [
     .matches(/^[A-Za-z '-]{1,50}$/)
     .withMessage('Please enter a valid name'),
 
+  stripHtml('surname'),
   body('surname')
     .isString()
     .withMessage('Please enter your surname')
@@ -43,6 +46,7 @@ export const registerRules = [
     .matches(/^[A-Za-z '-]{1,50}$/)
     .withMessage('Please enter a valid surname'),
 
+  stripHtml('displayName'),
   body('displayName')
     .isString()
     .withMessage('Please enter a display name')
@@ -57,6 +61,7 @@ export const registerRules = [
     .isIn(['client', 'freelancer'])
     .withMessage('Role must be client or freelancer'),
 
+  stripHtml('contactMethod'),
   body('contactMethod')
     .optional()
     .isString()
@@ -64,6 +69,7 @@ export const registerRules = [
     .trim()
     .isLength({ max: 120 })
     .withMessage('Contact method cannot exceed 120 characters'),
+    
 ];
 
 export const loginRules = [

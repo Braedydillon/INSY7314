@@ -1,0 +1,47 @@
+$kind: http-request
+url: https://localhost:5000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"rbac.freelancer@test.com\",\r
+
+    \  \"password\": \"TestPassword123!\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      pm.test(\"Freelancer login succeeds - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Freelancer login returns a JWT\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.token).to.be.a(\"string\").and.not.empty;\r
+
+      });\r
+
+      \r
+
+      if (pm.response.code === 200) {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.collectionVariables.set(\"freelancerToken\", response.token);\r
+
+      }\r\n"
+    language: text/javascript
+order: 624

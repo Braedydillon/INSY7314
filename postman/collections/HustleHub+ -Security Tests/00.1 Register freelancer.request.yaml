@@ -1,0 +1,60 @@
+$kind: http-request
+url: https://localhost:5000/api/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"RBAC\",\r
+
+    \  \"surname\": \"Freelancer\",\r
+
+    \  \"displayName\": \"RBAC Freelancer A\",\r
+
+    \  \"email\": \"rbac.freelancer@test.com\",\r
+
+    \  \"password\": \"TestPassword123!\",\r
+
+    \  \"role\": \"freelancer\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      pm.test(\"Freelancer registration succeeds or account already exists\",
+      function () {\r
+
+      \    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Freelancer registration returns an expected response\", function
+      () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    if ([200, 201].includes(pm.response.code)) {\r
+
+      \        pm.expect(response).to.be.an(\"object\");\r
+
+      \    } else {\r
+
+      \        const message = response.error || response.message || \"\";\r
+
+      \r
+
+      \        pm.expect(message).to.be.a(\"string\").and.not.empty;\r
+
+      \        pm.expect(message.toLowerCase()).to.match(/already|exist|duplica\
+      te/);\r
+
+      \    }\r
+
+      });\r\n"
+    language: text/javascript
+order: 561

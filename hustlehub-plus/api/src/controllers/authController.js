@@ -11,6 +11,7 @@ function createToken(user) {
     },
     config.JWT_SECRET,
     {
+      algorithm: 'HS256',
       expiresIn: config.JWT_EXPIRES_IN || '1h',
     }
   );

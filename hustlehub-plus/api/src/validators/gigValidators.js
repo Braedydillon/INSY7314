@@ -1,4 +1,5 @@
 import { body, param, query } from 'express-validator';
+import { stripHtml } from '../middleware/sanitizers.js';
 import {
   GIG_CATEGORIES,
   MIN_TIERS,
@@ -8,6 +9,7 @@ import {
 } from '../models/constants.js';
 
 export const gigRules = [
+  stripHtml('title'),
   body('title')
     .isString()
     .withMessage('Please enter a title.')
@@ -23,6 +25,7 @@ export const gigRules = [
     .isIn(GIG_CATEGORIES)
     .withMessage('Please choose a valid category.'),
 
+  stripHtml('description'),
   body('description')
     .isString()
     .withMessage('Please enter a description.')
@@ -35,6 +38,7 @@ export const gigRules = [
     .isArray({ min: MIN_TIERS, max: MAX_TIERS })
     .withMessage(`A gig must have between ${MIN_TIERS} and ${MAX_TIERS} tiers.`),
 
+  stripHtml('tiers.*.title'),
   body('tiers.*.title')
     .isString()
     .withMessage('Each tier needs a title.')
@@ -43,6 +47,7 @@ export const gigRules = [
     .isLength({ min: 2, max: 40 })
     .withMessage('Tier title must be 2 to 40 characters.'),
 
+  stripHtml('tiers.*.description'),
   body('tiers.*.description')
     .optional()
     .isString()
@@ -51,6 +56,7 @@ export const gigRules = [
     .trim()
     .isLength({ max: 200 })
     .withMessage('Tier description cannot exceed 200 characters.'),
+
 
   body('tiers.*.priceCents')
     .isInt({ min: MIN_TIER_PRICE_CENTS, max: MAX_TIER_PRICE_CENTS })

@@ -1,0 +1,67 @@
+$kind: http-request
+url: https://localhost:5000/api/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"RBAC Test Client\",\r
+
+    \  \"surname\": \"Tester\",\r
+
+    \  \"displayName\": \"RBAC Client\",\r
+
+    \  \"email\": \"rbac.client@test.com\",\r
+
+    \  \"password\": \"TestPassword123!\",\r
+
+    \  \"role\": \"client\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      pm.test(\"Client registration succeeds or account already exists\", function () {\r
+
+      \    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Client registration returns an expected response\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    if (pm.response.code === 200 || pm.response.code === 201) {\r
+
+      \        pm.expect(response).to.be.an(\"object\");\r
+
+      \    } else {\r
+
+      \        pm.expect(response.error).to.be.a(\"string\");\r
+
+      \r
+
+      \        const error = response.error.toLowerCase();\r
+
+      \r
+
+      \        pm.expect(\r
+
+      \            error.includes(\"already\") ||\r
+
+      \            error.includes(\"exist\") ||\r
+
+      \            error.includes(\"duplicate\")\r
+
+      \        ).to.be.true;\r
+
+      \    }\r
+
+      });\r\n"
+    language: text/javascript
+order: 478

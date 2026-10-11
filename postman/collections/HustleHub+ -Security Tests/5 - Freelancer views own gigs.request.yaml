@@ -1,0 +1,44 @@
+$kind: http-request
+url: https://localhost:5000/api/gigs/mygigs
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancerToken}}"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      pm.test(\"Freelancer can view own gigs - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Created gig appears in freelancer's gigs\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \    const gigId = pm.collectionVariables.get(\"createdGigId\");\r
+
+      \r
+
+      \    pm.expect(response.gigs).to.be.an(\"array\");\r
+
+      \    pm.expect(gigId, \"Created gig ID must be saved\").to.be.a(\"string\");\r
+
+      \r
+
+      \    const gig = response.gigs.find(g => g.id === gigId);\r
+
+      \r
+
+      \    pm.expect(gig, \"Created gig should appear in own gigs\").to.exist;\r
+
+      \    pm.expect(gig.title).to.eql(\"Lane B Automated Test Gig\");\r
+
+      });\r\n"
+    language: text/javascript
+order: 5000

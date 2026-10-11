@@ -1,0 +1,26 @@
+$kind: http-request
+url: https://localhost:5000/api/bookings/{{createdBookingId}}
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Client can view own booking - 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Correct booking is returned\", function () {\r
+
+      \    const booking = pm.response.json().booking;\r
+
+      \r
+
+      \    pm.expect(booking.id || booking._id)\r
+
+      \        .to.eql(pm.collectionVariables.get(\"createdBookingId\"));\r
+
+      });"
+    language: text/javascript
+order: 13000
