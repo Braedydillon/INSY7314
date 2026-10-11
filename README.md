@@ -32,6 +32,13 @@ TLS/SSL: node- forge
 Development tools: nodemon
 
 
+Frontend
+The frontend used in this application provides a view for the clients, freelancers and administrators.
+The frontend is designed using React and Vite and that communicates with the Node.js and Express backend through the Rest API requests.
+Frontend features:
+The frontend allows the users to register and login using there email address and password. The frontend communicates with the backend authentication API and uses JWT authentication for protected requests.
+
+
 Security Decisions
 
 Password Hashing(bcrypt): The password is hashed on registration with bcrypt before it reaches storage, and on login the submitted password is compared against the stored HASH with bcrypt.compare. this ensure that even if the users were exposed the passwords can no be recovered directly. 
