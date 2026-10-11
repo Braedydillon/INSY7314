@@ -1,8 +1,7 @@
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap");
 
 :root {
-  font-family: 'DM Sans', Arial, sans-serif;
+  font-family: "DM Sans", Arial, sans-serif;
   color: #173b35;
   background: #f5f8f6;
   font-synthesis: none;
@@ -21,8 +20,11 @@ body {
   background: #f5f8f6;
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Outfit', sans-serif;
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Outfit", sans-serif;
   letter-spacing: -0.035em;
 }
 
@@ -31,7 +33,10 @@ a {
   color: inherit;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font: inherit;
 }
 
@@ -44,8 +49,13 @@ button:disabled {
   cursor: not-allowed;
 }
 
-button, input, select, textarea {
-  transition: border-color 0.2s, background 0.2s;
+button,
+input,
+select,
+textarea {
+  transition:
+    border-color 0.2s,
+    background 0.2s;
 }
 
 .container {
@@ -72,7 +82,7 @@ button, input, select, textarea {
   background: #103b32;
   color: #ffffff;
   border-bottom: 1px solid #285347;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
 }
 
 .nav-row {
@@ -84,7 +94,7 @@ button, input, select, textarea {
 
 .logo {
   color: white;
-  font-family: 'Outfit', sans-serif;
+  font-family: "Outfit", sans-serif;
   font-size: 26px;
   font-weight: 800;
   display: flex;
@@ -247,22 +257,22 @@ button, input, select, textarea {
 }
 
 .auth-intro::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 370px;
   height: 370px;
-  border: 70px solid rgba(255,255,255,0.045);
+  border: 70px solid rgba(255, 255, 255, 0.045);
   border-radius: 50%;
   right: -160px;
   top: -130px;
 }
 
 .auth-intro::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 270px;
   height: 270px;
-  border: 55px solid rgba(255,255,255,0.045);
+  border: 55px solid rgba(255, 255, 255, 0.045);
   border-radius: 50%;
   bottom: -140px;
   left: -100px;
@@ -306,11 +316,11 @@ button, input, select, textarea {
 .auth-decor {
   margin-top: 40px;
   padding: 15px 20px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 14px;
   color: #d5f5e5;
   width: fit-content;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .form-panel {
@@ -543,16 +553,28 @@ button, input, select, textarea {
 
 .details-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: 1fr;
   gap: 25px;
 }
 
-.tier-card,
-.tier-editor-card {
-  border: 1px solid #e0ebe4;
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.tier-grid .tier-card {
+  margin-bottom: 0;
+  padding: 20px;
+  border: 1px solid #cfe0d6;
   border-radius: 12px;
-  padding: 19px;
-  margin-bottom: 15px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.tier-grid .tier-card .btn {
+  margin-top: auto;
 }
 
 .tier-price {
@@ -712,7 +734,8 @@ table {
   width: 100%;
 }
 
-th, td {
+th,
+td {
   text-align: left;
   padding: 15px;
   border-bottom: 1px solid #e8efeb;
@@ -760,7 +783,9 @@ th, td {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* HOME PAGE */
