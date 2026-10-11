@@ -116,3 +116,21 @@ export async function deleteGig(req, res, next) {
     next(error);
   }
 }
+
+export async function restoreGig(req, res, next) {
+  try {
+    const gig = await Gig.findOneAndUpdate(
+      { _id: req.params.id, freelancerId: req.user.id, status: 'removed' },
+      { status: 'active' },
+      { new: true }
+    );
+
+    if (!gig) {
+      return res.status(404).json({ error: 'Gig not found.' });
+    }
+
+    return res.status(200).json({ gig });
+  } catch (error) {
+    next(error);
+  }
+}
