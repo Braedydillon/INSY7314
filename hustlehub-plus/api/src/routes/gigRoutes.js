@@ -10,6 +10,7 @@ import {
   getGig,
   updateGig,
   deleteGig,
+  restoreGig,
 } from '../controllers/gigController.js';
 
 const router = express.Router();
@@ -27,6 +28,14 @@ router.delete(
   gigIdRule,
   validate,
   deleteGig
+);
+router.patch(
+  '/:id/restore',
+  authenticate,
+  authorise('freelancer'),
+  gigIdRule,
+  validate,
+  restoreGig
 );
 
 export default router;
