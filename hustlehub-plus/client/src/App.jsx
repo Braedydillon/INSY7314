@@ -1,68 +1,52 @@
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import { Navigate, Route, Routes } from 'react-router-dom';
+import Layout from "./components/Layout.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
+import { homeForRole } from "./utils/format.js";
 
-import Layout from './components/Layout.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
-import { useAuth } from './context/AuthContext.jsx';
-import { homeForRole } from './utils/format.js';
-
-import Home from './pages/Home.jsx';
-import Gigs from './pages/Gigs.jsx';
-import GigDetails from './pages/GigDetails.jsx';
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
-import Booking from './pages/Booking.jsx';
-import MyBookings from './pages/MyBookings.jsx';
-import DashboardGigs from './pages/DashboardGigs.jsx';
-import DashboardBookings from './pages/DashboardBookings.jsx';
-import DashboardIncome from './pages/DashboardIncome.jsx';
-import Transactions from './pages/Transactions.jsx';
-import Profile from './pages/Profile.jsx';
-import Admin from './pages/Admin.jsx';
+import Home from "./pages/Home.jsx";
+import Gigs from "./pages/Gigs.jsx";
+import GigDetails from "./pages/GigDetails.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import Booking from "./pages/Booking.jsx";
+import MyBookings from "./pages/MyBookings.jsx";
+import DashboardGigs from "./pages/DashboardGigs.jsx";
+import DashboardBookings from "./pages/DashboardBookings.jsx";
+import DashboardIncome from "./pages/DashboardIncome.jsx";
+import Transactions from "./pages/Transactions.jsx";
+import Profile from "./pages/Profile.jsx";
+import Admin from "./pages/Admin.jsx";
 
 function StartPage() {
   const { isAuthenticated, user } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Home />;
   }
 
-  return (
-    <Navigate
-      to={homeForRole(user?.role)}
-      replace
-    />
-  );
+  return <Navigate to={homeForRole(user?.role)} replace />;
 }
 
 function GuestOnly({ children }) {
   const { isAuthenticated, user } = useAuth();
 
   if (isAuthenticated) {
-    return (
-      <Navigate
-        to={homeForRole(user?.role)}
-        replace
-      />
-    );
+    return <Navigate to={homeForRole(user?.role)} replace />;
   }
 
   return children;
 }
 
 function Secure({ children, roles }) {
-  return (
-    <ProtectedRoute roles={roles}>
-      {children}
-    </ProtectedRoute>
-  );
+  return <ProtectedRoute roles={roles}>{children}</ProtectedRoute>;
 }
 
 export default function App() {
   return (
     <Layout>
       <Routes>
-
         {/* Website opens here first */}
         <Route path="/" element={<StartPage />} />
 
@@ -95,29 +79,15 @@ export default function App() {
           }
         />
 
-        <Route
-          path="/gigs"
-          element={
-            <Secure>
-              <Gigs />
-            </Secure>
-          }
-        />
+        <Route path="/gigs" element={<Gigs />} />
 
-        <Route
-          path="/gigs/:id"
-          element={
-            <Secure>
-              <GigDetails />
-            </Secure>
-          }
-        />
+        <Route path="/gigs/:id" element={<GigDetails />} />
 
         {/* Client */}
         <Route
           path="/bookings"
           element={
-            <Secure roles={['client']}>
+            <Secure roles={["client"]}>
               <MyBookings />
             </Secure>
           }
@@ -126,7 +96,7 @@ export default function App() {
         <Route
           path="/bookings/:id"
           element={
-            <Secure roles={['client']}>
+            <Secure roles={["client"]}>
               <Booking />
             </Secure>
           }
@@ -136,7 +106,7 @@ export default function App() {
         <Route
           path="/dashboard/gigs"
           element={
-            <Secure roles={['freelancer']}>
+            <Secure roles={["freelancer"]}>
               <DashboardGigs />
             </Secure>
           }
@@ -145,7 +115,7 @@ export default function App() {
         <Route
           path="/dashboard/bookings"
           element={
-            <Secure roles={['freelancer']}>
+            <Secure roles={["freelancer"]}>
               <DashboardBookings />
             </Secure>
           }
@@ -154,7 +124,7 @@ export default function App() {
         <Route
           path="/dashboard/income"
           element={
-            <Secure roles={['freelancer']}>
+            <Secure roles={["freelancer"]}>
               <DashboardIncome />
             </Secure>
           }
@@ -164,7 +134,7 @@ export default function App() {
         <Route
           path="/transactions"
           element={
-            <Secure roles={['client', 'freelancer']}>
+            <Secure roles={["client", "freelancer"]}>
               <Transactions />
             </Secure>
           }
@@ -183,14 +153,13 @@ export default function App() {
         <Route
           path="/admin"
           element={
-            <Secure roles={['admin']}>
+            <Secure roles={["admin"]}>
               <Admin />
             </Secure>
           }
         />
 
         <Route path="*" element={<StartPage />} />
-
       </Routes>
     </Layout>
   );

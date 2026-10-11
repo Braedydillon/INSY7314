@@ -1,217 +1,226 @@
-
-import { useEffect, useState } from 'react'
-import { api, routes } from '../services/api.js'
+import { useEffect, useState } from "react";
+import { api, routes } from "../services/api.js";
 import {
   PageHeading,
   Loading,
   Empty,
   Alert,
   Field,
-  Status
-} from '../components/UI.jsx'
-import {
-  listOf,
-  idOf,
-  money,
-  minTierPrice
-} from '../utils/format.js'
+  Status,
+} from "../components/UI.jsx";
+import { listOf, idOf, money, minTierPrice } from "../utils/format.js";
 
 const categories = [
-  'music',
-  'coding',
-  'writing',
-  'marketing',
-  'tutoring',
-  'photography',
-  'art',
-  'design',
-  'videography',
-  'other'
-]
+  "music",
+  "coding",
+  "writing",
+  "marketing",
+  "tutoring",
+  "photography",
+  "art",
+  "design",
+  "videography",
+  "other",
+];
 
 function blankTier() {
   return {
-    title: '',
-    description: '',
-    price: ''
-  }
+    title: "",
+    description: "",
+    price: "",
+  };
 }
 
 function blankGig() {
   return {
-    title: '',
-    description: '',
-    category: 'design',
-    tiers: [blankTier()]
-  }
+    title: "",
+    description: "",
+    category: "design",
+    tiers: [blankTier()],
+  };
 }
 
 export default function DashboardGigs() {
-  const [gigs, setGigs] = useState([])
-  const [form, setForm] = useState(blankGig)
-  const [editingId, setEditingId] = useState('')
-  const [showForm, setShowForm] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState(null)
+  const [gigs, setGigs] = useState([]);
+  const [form, setForm] = useState(blankGig);
+  const [editingId, setEditingId] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
 
   async function refresh() {
-    const data = await api.get(routes.myGigs)
-    setGigs(listOf(data, 'gigs'))
+    const data = await api.get(routes.myGigs);
+    setGigs(listOf(data, "gigs"));
   }
 
   useEffect(() => {
-    let active = true
+    let active = true;
 
-    api.get(routes.myGigs)
-      .then(data => {
-        if (active) setGigs(listOf(data, 'gigs'))
+    api
+      .get(routes.myGigs)
+      .then((data) => {
+        if (active) setGigs(listOf(data, "gigs"));
       })
-      .catch(err => {
-        if (active) setError(err)
+      .catch((err) => {
+        if (active) setError(err);
       })
       .finally(() => {
-        if (active) setLoading(false)
-      })
+        if (active) setLoading(false);
+      });
 
     return () => {
-      active = false
-    }
-  }, [])
+      active = false;
+    };
+  }, []);
 
   function newGig() {
-    setForm(blankGig())
-    setEditingId('')
-    setError(null)
-    setShowForm(true)
+    setForm(blankGig());
+    setEditingId("");
+    setError(null);
+    setShowForm(true);
   }
 
   function editGig(gig) {
-    setEditingId(idOf(gig))
+    setEditingId(idOf(gig));
     setForm({
-      title: gig.title || '',
-      description: gig.description || '',
-      category: gig.category || 'design',
-      tiers: (gig.tiers || []).map(tier => ({
+      title: gig.title || "",
+      description: gig.description || "",
+      category: gig.category || "design",
+      tiers: (gig.tiers || []).map((tier) => ({
         title: tier.title,
-        description: tier.description || '',
-        price: (tier.priceCents / 100).toFixed(2)
-      }))
-    })
-    setError(null)
-    setShowForm(true)
+        description: tier.description || "",
+        price: (tier.priceCents / 100).toFixed(2),
+      })),
+    });
+    setError(null);
+    setShowForm(true);
   }
 
   function updateField(event) {
-    const { name, value } = event.target
-    setForm(previous => ({
+    const { name, value } = event.target;
+    setForm((previous) => ({
       ...previous,
-      [name]: value
-    }))
+      [name]: value,
+    }));
   }
 
   function updateTier(index, name, value) {
-    setForm(previous => ({
+    setForm((previous) => ({
       ...previous,
       tiers: previous.tiers.map((tier, i) =>
-        i === index
-          ? { ...tier, [name]: value }
-          : tier
-      )
-    }))
+        i === index ? { ...tier, [name]: value } : tier,
+      ),
+    }));
   }
 
   function addTier() {
-    if (form.tiers.length >= 3) return
+    if (form.tiers.length >= 3) return;
 
-    setForm(previous => ({
+    setForm((previous) => ({
       ...previous,
-      tiers: [...previous.tiers, blankTier()]
-    }))
+      tiers: [...previous.tiers, blankTier()],
+    }));
   }
 
   function removeTier(index) {
-    if (form.tiers.length <= 1) return
+    if (form.tiers.length <= 1) return;
 
-    setForm(previous => ({
+    setForm((previous) => ({
       ...previous,
-      tiers: previous.tiers.filter((_, i) => i !== index)
-    }))
+      tiers: previous.tiers.filter((_, i) => i !== index),
+    }));
   }
 
   async function submit(event) {
-    event.preventDefault()
-    if (busy) return
+    event.preventDefault();
+    if (busy) return;
 
-    setError(null)
+    setError(null);
 
-    if (
-      form.title.trim().length < 3 ||
-      form.description.trim().length < 10
-    ) {
-      setError(new Error(
-        'Title must have at least 3 characters and description at least 10.'
-      ))
-      return
+    if (form.title.trim().length < 3 || form.description.trim().length < 10) {
+      setError(
+        new Error(
+          "Title must have at least 3 characters and description at least 10.",
+        ),
+      );
+      return;
     }
 
-    const invalidTier = form.tiers.some(tier =>
-      tier.title.trim().length < 2 ||
-      !/^\d+(\.\d{1,2})?$/.test(String(tier.price)) ||
-      Number(tier.price) < 30 ||
-      Number(tier.price) > 50000
-    )
+    const invalidTier = form.tiers.some(
+      (tier) =>
+        tier.title.trim().length < 2 ||
+        !/^\d+(\.\d{1,2})?$/.test(String(tier.price)) ||
+        Number(tier.price) < 30 ||
+        Number(tier.price) > 50000,
+    );
 
     if (invalidTier) {
-      setError(new Error(
-        'Each package needs a title and a price between R30 and R50,000.'
-      ))
-      return
+      setError(
+        new Error(
+          "Each package needs a title and a price between R30 and R50,000.",
+        ),
+      );
+      return;
     }
 
     const body = {
       title: form.title.trim(),
       description: form.description.trim(),
       category: form.category,
-      tiers: form.tiers.map(tier => ({
+      tiers: form.tiers.map((tier) => ({
         title: tier.title.trim(),
         description: tier.description.trim(),
-        priceCents: Math.round(Number(tier.price) * 100)
-      }))
-    }
+        priceCents: Math.round(Number(tier.price) * 100),
+      })),
+    };
 
-    setBusy(true)
+    setBusy(true);
 
     try {
       if (editingId) {
-        await api.put(`${routes.gigs}/${editingId}`, body)
+        await api.put(`${routes.gigs}/${editingId}`, body);
       } else {
-        await api.post(routes.gigs, body)
+        await api.post(routes.gigs, body);
       }
 
-      await refresh()
-      setShowForm(false)
-      setEditingId('')
+      await refresh();
+      setShowForm(false);
+      setEditingId("");
     } catch (err) {
-      setError(err)
+      setError(err);
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
   }
 
   async function deleteGig(gig) {
-    if (!window.confirm(`Remove "${gig.title}"?`)) return
+    if (!window.confirm(`Remove "${gig.title}"?`)) return;
 
-    setBusy(true)
-    setError(null)
+    setBusy(true);
+    setError(null);
 
     try {
-      await api.delete(`${routes.gigs}/${idOf(gig)}`)
-      await refresh()
+      await api.delete(`${routes.gigs}/${idOf(gig)}`);
+      await refresh();
     } catch (err) {
-      setError(err)
+      setError(err);
     } finally {
-      setBusy(false)
+      setBusy(false);
+    }
+  }
+
+  async function restoreGig(gig) {
+    setBusy(true);
+    setError(null);
+
+    try {
+      await api.patch(`${routes.gigs}/${idOf(gig)}/restore`, {});
+      await refresh();
+    } catch (err) {
+      setError(err);
+    } finally {
+      setBusy(false);
     }
   }
 
@@ -222,10 +231,7 @@ export default function DashboardGigs() {
         title="My Gigs"
         subtitle="Create and manage your services."
         actions={
-          <button
-            className="btn btn-primary"
-            onClick={newGig}
-          >
+          <button className="btn btn-primary" onClick={newGig}>
             + Create Gig
           </button>
         }
@@ -236,7 +242,7 @@ export default function DashboardGigs() {
       {showForm && (
         <div className="content-card gig-editor">
           <div className="form-header">
-            <h2>{editingId ? 'Edit Gig' : 'Create Gig'}</h2>
+            <h2>{editingId ? "Edit Gig" : "Create Gig"}</h2>
 
             <button
               className="btn btn-outline btn-sm"
@@ -265,7 +271,7 @@ export default function DashboardGigs() {
                 value={form.category}
                 onChange={updateField}
               >
-                {categories.map(category => (
+                {categories.map((category) => (
                   <option key={category} value={category}>
                     {category}
                   </option>
@@ -315,16 +321,13 @@ export default function DashboardGigs() {
                     )}
                   </div>
 
-                  <Field
-                    label="Package Name"
-                    name={`tier-name-${index}`}
-                  >
+                  <Field label="Package Name" name={`tier-name-${index}`}>
                     <input
                       id={`tier-name-${index}`}
                       maxLength={40}
                       value={tier.title}
-                      onChange={e =>
-                        updateTier(index, 'title', e.target.value)
+                      onChange={(e) =>
+                        updateTier(index, "title", e.target.value)
                       }
                       required
                     />
@@ -338,16 +341,13 @@ export default function DashboardGigs() {
                       id={`tier-description-${index}`}
                       maxLength={200}
                       value={tier.description}
-                      onChange={e =>
-                        updateTier(index, 'description', e.target.value)
+                      onChange={(e) =>
+                        updateTier(index, "description", e.target.value)
                       }
                     />
                   </Field>
 
-                  <Field
-                    label="Price (Rand)"
-                    name={`tier-price-${index}`}
-                  >
+                  <Field label="Price (Rand)" name={`tier-price-${index}`}>
                     <input
                       id={`tier-price-${index}`}
                       type="number"
@@ -355,8 +355,8 @@ export default function DashboardGigs() {
                       max="50000"
                       step="0.01"
                       value={tier.price}
-                      onChange={e =>
-                        updateTier(index, 'price', e.target.value)
+                      onChange={(e) =>
+                        updateTier(index, "price", e.target.value)
                       }
                       required
                     />
@@ -365,16 +365,8 @@ export default function DashboardGigs() {
               ))}
             </div>
 
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={busy}
-            >
-              {busy
-                ? 'Saving...'
-                : editingId
-                  ? 'Save Changes'
-                  : 'Create Gig'}
+            <button className="btn btn-primary" type="submit" disabled={busy}>
+              {busy ? "Saving..." : editingId ? "Save Changes" : "Create Gig"}
             </button>
           </form>
         </div>
@@ -388,42 +380,51 @@ export default function DashboardGigs() {
         </Empty>
       ) : (
         <div className="stack-list">
-          {gigs.map(gig => (
+          {gigs.map((gig) => (
             <div className="booking-row" key={idOf(gig)}>
-              <div className="booking-icon">✦</div>
-
               <div className="booking-main">
                 <strong>{gig.title}</strong>
 
                 <p>
-                  {gig.category} · From{' '}
-                  {money(minTierPrice(gig) ?? 0)}
+                  {gig.category} · From {money(minTierPrice(gig) ?? 0)}
                 </p>
               </div>
 
-              <Status value={gig.status || 'active'} />
+              <Status value={gig.status || "active"} />
 
               <div className="row-actions">
-                <button
-                  className="btn btn-outline btn-sm"
-                  disabled={busy}
-                  onClick={() => editGig(gig)}
-                >
-                  Edit
-                </button>
+                {gig.status === "removed" ? (
+                  <button
+                    className="btn btn-outline btn-sm"
+                    disabled={busy}
+                    onClick={() => restoreGig(gig)}
+                  >
+                    Reactivate
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="btn btn-outline btn-sm"
+                      disabled={busy}
+                      onClick={() => editGig(gig)}
+                    >
+                      Edit
+                    </button>
 
-                <button
-                  className="btn btn-outline btn-sm"
-                  disabled={busy || gig.status === 'removed'}
-                  onClick={() => deleteGig(gig)}
-                >
-                  Remove
-                </button>
+                    <button
+                      className="btn btn-outline btn-sm"
+                      disabled={busy}
+                      onClick={() => deleteGig(gig)}
+                    >
+                      Remove
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))}
         </div>
       )}
     </section>
-  )
+  );
 }

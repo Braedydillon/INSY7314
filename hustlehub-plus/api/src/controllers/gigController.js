@@ -122,7 +122,7 @@ export async function restoreGig(req, res, next) {
     const gig = await Gig.findOneAndUpdate(
       { _id: req.params.id, freelancerId: req.user.id, status: 'removed' },
       { status: 'active' },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!gig) {
