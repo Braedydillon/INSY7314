@@ -1,0 +1,28 @@
+$kind: http-request
+url: https://localhost:5000/api/admin/users
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{clientToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Client cannot access admin users - 403 Forbidden\", function () {\r
+
+      \    pm.response.to.have.status(403);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response contains permission error\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response).to.have.property(\"error\");\r
+
+      });"
+    language: text/javascript
+order: 28000

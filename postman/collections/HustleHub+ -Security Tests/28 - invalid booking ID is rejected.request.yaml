@@ -1,0 +1,26 @@
+$kind: http-request
+url: https://localhost:5000/api/bookings/not-a-valid-id
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{clientToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Invalid booking ID returns 400\", function () {\r
+
+      \    pm.response.to.have.status(400);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response contains validation errors\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \    pm.expect(response.errors).to.be.an(\"array\").that.is.not.empty;\r
+
+      });"
+    language: text/javascript
+order: 37000

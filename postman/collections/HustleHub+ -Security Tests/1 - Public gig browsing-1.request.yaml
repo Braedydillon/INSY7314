@@ -26,4 +26,4 @@ scripts:
 
       });\r\n"
     language: text/javascript
-order: 1000
+order: 7000

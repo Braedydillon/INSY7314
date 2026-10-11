@@ -1,4 +1,25 @@
 $kind: http-request
-url: ""
-method: GET
-order: 8000
+url: https://localhost:5000/api/bookings
+method: POST
+order: 19000
+body:
+  type: json
+  content: |-
+    {
+      "gigId": "{{createdGigId}}",
+      "tierId": "{{createdTierId}}"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Freelancer cannot create booking - 403", function () {
+          pm.response.to.have.status(403);
+      });
+
+      pm.test("Response contains an error message", function () {
+          pm.expect(pm.response.json().error).to.be.a("string");
+      });

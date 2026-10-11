@@ -13,7 +13,9 @@
     "sanitize-html": "^2.18.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "newman": "^6.2.3",
+    "nodemon": "^3.1.14",
+    "yaml": "^2.9.1"
   },
   "name": "api",
   "version": "1.0.0",
@@ -23,7 +25,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "certs": "node generate-certs.cjs",
-    "db:rst": "node scripts/db-reset.js"
+    "db:rst": "node scripts/db-reset.js",
+    "test:api": "newman run ../../postman/HustleHub-Security-Tests.postman_collection.json --insecure"
   },
   "keywords": [],
   "author": "",

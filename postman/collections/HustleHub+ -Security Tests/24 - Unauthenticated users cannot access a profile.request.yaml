@@ -1,0 +1,26 @@
+$kind: http-request
+url: https://localhost:5000/api/users/me
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Unauthenticated user cannot view profile - 401\", function () {\r
+
+      \    pm.response.to.have.status(401);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response contains authentication error\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response).to.have.property(\"error\");\r
+
+      \    pm.expect(response.error).to.eql(\"Authentication required.\");\r
+
+      });"
+    language: text/javascript
+order: 33000

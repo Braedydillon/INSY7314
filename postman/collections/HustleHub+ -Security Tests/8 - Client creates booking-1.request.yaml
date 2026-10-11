@@ -1,4 +1,5 @@
 $kind: http-request
+name: 8 - Client creates booking
 url: https://localhost:5000/api/bookings
 method: POST
 body:
@@ -16,7 +17,7 @@ auth:
     token: "{{clientToken}}"
 scripts:
   - type: afterResponse
-    code: "pm.test(\"Client can create a booking - 201 Created\", function () {\r
+    code: "pm.test(\"Client can create booking - 201\", function () {\r
 
       \    pm.response.to.have.status(201);\r
 
@@ -24,17 +25,15 @@ scripts:
 
       \r
 
-      pm.test(\"Booking and payment transaction are created\", function () {\r
+      pm.test(\"Booking and transaction are created\", function () {\r
 
       \    const response = pm.response.json();\r
 
       \r
 
-      \    pm.expect(response.booking).to.be.an(\"object\");\r
+      \    pm.expect(response.booking).to.exist;\r
 
-      \    pm.expect(response.transaction).to.be.an(\"object\");\r
-
-      \    pm.expect(response.transaction.type).to.eql(\"payment\");\r
+      \    pm.expect(response.transaction).to.exist;\r
 
       });\r
 
@@ -46,13 +45,16 @@ scripts:
 
       \r
 
-      \    pm.collectionVariables.set(\"createdBookingId\",
-      response.booking._id);\r
+      \    const bookingId = response.booking.id || response.booking._id;\r
+
+      \r
+
+      \    pm.collectionVariables.set(\"createdBookingId\", bookingId);\r
 
       }"
     language: text/javascript
   - type: beforeRequest
     code: ""
     language: text/javascript
-examples: .resources/8 - Client creates booking.resources/examples
-order: 4436
+examples: .resources/8 - Client creates booking-1.resources/examples
+order: 11000

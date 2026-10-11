@@ -1,0 +1,28 @@
+$kind: http-request
+url: https://localhost:5000/api/bookings/{{createdBookingId}}/accept
+method: PATCH
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancer2Token}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Other freelancer cannot accept booking - 404\", function () {\r
+
+      \    pm.response.to.have.status(404);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking ownership is protected\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response).to.have.property(\"error\");\r
+
+      });"
+    language: text/javascript
+order: 39000

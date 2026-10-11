@@ -1,6 +1,10 @@
 $kind: http-request
 url: https://localhost:5000/api/bookings/{{createdBookingId}}
 method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{clientToken}}"
 scripts:
   - type: afterResponse
     code: "pm.test(\"Client can view own booking - 200\", function () {\r
@@ -23,4 +27,4 @@ scripts:
 
       });"
     language: text/javascript
-order: 13000
+order: 15000

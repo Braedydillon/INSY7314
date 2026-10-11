@@ -1,0 +1,26 @@
+$kind: http-request
+url: https://localhost:5000/api/bookings/{{createdBookingId}}/accept
+method: PATCH
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancerToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Freelancer accepts booking - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking status changes to confirmed\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \    pm.expect(response.booking.status).to.eql(\"confirmed\");\r
+
+      });"
+    language: text/javascript
+order: 13000

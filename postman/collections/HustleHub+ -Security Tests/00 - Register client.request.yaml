@@ -22,7 +22,8 @@ scripts:
   - type: afterResponse
     code: "\r
 
-      pm.test(\"Client registration succeeds or account already exists\", function () {\r
+      pm.test(\"Client registration succeeds or account already exists\",
+      function () {\r
 
       \    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);\r
 
@@ -30,7 +31,8 @@ scripts:
 
       \r
 
-      pm.test(\"Client registration returns an expected response\", function () {\r
+      pm.test(\"Client registration returns an expected response\", function ()
+      {\r
 
       \    const response = pm.response.json();\r
 
@@ -64,4 +66,4 @@ scripts:
 
       });\r\n"
     language: text/javascript
-order: 478
+order: 1000

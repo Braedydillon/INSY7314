@@ -1,0 +1,41 @@
+$kind: http-request
+url: https://localhost:5000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"{{adminEmail}}\",\r
+
+    \  \"password\": \"{{adminPassword}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Admin login succeeds - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Admin login returns a JWT\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.token).to.be.a(\"string\").and.not.empty;\r
+
+      });\r
+
+      \r
+
+      if (pm.response.code === 200) {\r
+
+      \    pm.collectionVariables.set(\"adminToken\", pm.response.json().token);\r
+
+      }"
+    language: text/javascript
+order: 30000

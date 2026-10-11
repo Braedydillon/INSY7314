@@ -22,7 +22,8 @@ scripts:
   - type: afterResponse
     code: "\r
 
-      pm.test(\"Second freelancer registration succeeds or account already exists\", function () {\r
+      pm.test(\"Second freelancer registration succeeds or account already
+      exists\", function () {\r
 
       \    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 409]);\r
 
@@ -30,7 +31,8 @@ scripts:
 
       \r
 
-      pm.test(\"Second freelancer registration returns an expected response\", function () {\r
+      pm.test(\"Second freelancer registration returns an expected response\",
+      function () {\r
 
       \    const response = pm.response.json();\r
 
@@ -48,10 +50,11 @@ scripts:
 
       \        pm.expect(message).to.be.a(\"string\").and.not.empty;\r
 
-      \        pm.expect(message.toLowerCase()).to.match(/already|exist|duplicate/);\r
+      \        pm.expect(message.toLowerCase()).to.match(/already|exist|duplica\
+      te/);\r
 
       \    }\r
 
       });\r\n"
     language: text/javascript
-order: 569
+order: 3000

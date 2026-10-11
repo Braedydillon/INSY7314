@@ -9,7 +9,8 @@ body:
 
     \  \"category\": \"design\",\r
 
-    \  \"description\": \"Attempting to update a gig belonging to another freelancer.\",\r
+    \  \"description\": \"Attempting to update a gig belonging to another
+    freelancer.\",\r
 
     \  \"tiers\": [\r
 
@@ -50,4 +51,4 @@ scripts:
 
       });"
     language: text/javascript
-order: 6000
+order: 17000

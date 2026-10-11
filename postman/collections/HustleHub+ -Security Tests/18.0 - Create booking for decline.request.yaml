@@ -1,0 +1,61 @@
+$kind: http-request
+url: https://localhost:5000/api/bookings
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"gigId\": \"{{createdGigId}}\",\r
+
+    \  \"tierId\": \"{{createdTierId}}\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{clientToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Client can create booking - 201\", function () {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking and transaction are created\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.booking).to.exist;\r
+
+      \    pm.expect(response.transaction).to.exist;\r
+
+      });\r
+
+      \r
+
+      if (pm.response.code === 201) {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.collectionVariables.set(\r
+
+      \        \"declineBookingId\",\r
+
+      \        response.booking.id || response.booking._id\r
+
+      \    );\r
+
+      }"
+    language: text/javascript
+  - type: beforeRequest
+    code: ""
+    language: text/javascript
+examples: .resources/18.0 - Create booking for decline.resources/examples
+order: 25216

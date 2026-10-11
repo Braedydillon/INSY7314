@@ -9,7 +9,8 @@ body:
 
     \  \"category\": \"design\",\r
 
-    \  \"description\": \"A test gig created to verify freelancer permissions.\",\r
+    \  \"description\": \"A test gig created to verify freelancer
+    permissions.\",\r
 
     \  \"tiers\": [\r
 
@@ -50,7 +51,8 @@ scripts:
 
       \    pm.expect(response.gig).to.be.an(\"object\");\r
 
-      \    pm.expect(response.gig.title).to.eql(\"Lane B Automated Test Gig\");\r
+      \    pm.expect(response.gig.title).to.eql(\"Lane B Automated Test
+      Gig\");\r
 
       \    pm.expect(response.gig.freelancerId).to.be.a(\"string\");\r
 
@@ -66,7 +68,8 @@ scripts:
 
       \    pm.collectionVariables.set(\"createdGigId\", response.gig.id);\r
 
-      \    pm.collectionVariables.set(\"createdTierId\", response.gig.tiers[0].id);\r
+      \    pm.collectionVariables.set(\"createdTierId\",
+      response.gig.tiers[0].id);\r
 
       \r
 
@@ -76,4 +79,4 @@ scripts:
 
       }"
     language: text/javascript
-order: 4000
+order: 10000

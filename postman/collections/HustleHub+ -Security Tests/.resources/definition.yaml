@@ -18,3 +18,24 @@ variables:
   - key: createdBookingId
     value: ""
     disabled: false
+  - key: bookingId
+    value: ""
+    disabled: false
+  - key: cancelBookingId
+    value: ""
+    disabled: false
+  - key: declineBookingId
+    value: ""
+    disabled: false
+  - key: adminToken
+    secret: true
+    disabled: false
+  - key: adminEmail
+    secret: true
+    disabled: false
+  - key: adminPassword
+    secret: true
+    disabled: false
+  - key: rateLimitTriggered
+    value: ""
+    disabled: false

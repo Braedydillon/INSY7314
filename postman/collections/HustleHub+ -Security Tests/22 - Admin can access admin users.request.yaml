@@ -1,0 +1,28 @@
+$kind: http-request
+url: https://localhost:5000/api/admin/users
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{adminToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Admin can access users - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Admin response contains users array\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.users).to.be.an(\"array\");\r
+
+      });"
+    language: text/javascript
+order: 31000

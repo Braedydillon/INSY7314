@@ -1,0 +1,53 @@
+$kind: http-request
+url: https://localhost:5000/api/users/me
+method: PATCH
+body:
+  type: json
+  content: "{\r
+
+    \  \"displayName\": \"<b>Security Test Client</b>\",\r
+
+    \  \"contactMethod\": \"securitytest@example.com\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{clientToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"HTML input is accepted and sanitised - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"HTML tags are removed from display name\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.user.displayName).to.eql(\"Security Test Client\");\r
+
+      \    pm.expect(response.user.displayName).not.to.include(\"<b>\");\r
+
+      \    pm.expect(response.user.displayName).not.to.include(\"</b>\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response does not expose password hash\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.user).not.to.have.property(\"passwordHash\");\r
+
+      });"
+    language: text/javascript
+order: 38000

@@ -31,4 +31,4 @@ scripts:
 
       });\r\n"
     language: text/javascript
-order: 3000
+order: 9000

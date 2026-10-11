@@ -1,0 +1,30 @@
+$kind: http-request
+url: https://localhost:5000/api/users/me
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{clientToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Client can view own profile - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Profile response does not expose password hash\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response).not.to.have.property(\"passwordHash\");\r
+
+      \    pm.expect(JSON.stringify(response)).not.to.include(\"passwordHash\");\r
+
+      });"
+    language: text/javascript
+order: 32000

@@ -1,0 +1,28 @@
+$kind: http-request
+url: https://localhost:5000/api/bookings/{{createdBookingId}}/complete
+method: PATCH
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancerToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Freelancer completes booking - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking status changes to completed\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.booking.status).to.eql(\"completed\");\r
+
+      });"
+    language: text/javascript
+order: 14000

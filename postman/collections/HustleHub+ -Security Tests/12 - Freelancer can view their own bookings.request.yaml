@@ -1,4 +1,18 @@
 $kind: http-request
-url: ""
+url: https://localhost:5000/api/bookings/mybookings
 method: GET
-order: 11000
+order: 22000
+auth:
+  type: bearer
+  credentials:
+    token: "{{freelancerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Freelancer can view own bookings - 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response includes bookings array", function () {
+          pm.expect(pm.response.json().bookings).to.be.an("array");
+      });

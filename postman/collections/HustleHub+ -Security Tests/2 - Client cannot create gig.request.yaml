@@ -26,8 +26,9 @@ scripts:
 
       \    pm.expect(response.error).to.be.a(\"string\");\r
 
-      \    pm.expect(response.error.toLowerCase()).to.include(\"permission denied\");\r
+      \    pm.expect(response.error.toLowerCase()).to.include(\"permission
+      denied\");\r
 
       });\r\n"
     language: text/javascript
-order: 2000
+order: 8000

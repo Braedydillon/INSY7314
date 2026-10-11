@@ -1,0 +1,40 @@
+$kind: http-request
+url: https://localhost:5000/api/users/me
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{clientToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Client profile can still be accessed - 200 OK\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Client role remains unchanged\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.user.role).to.eql(\"client\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Client was not promoted to admin\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(response.user.role).not.to.eql(\"admin\");\r
+
+      });"
+    language: text/javascript
+order: 36000

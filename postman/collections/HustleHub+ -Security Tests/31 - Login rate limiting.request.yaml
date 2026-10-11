@@ -1,0 +1,39 @@
+$kind: http-request
+url: https://localhost:5000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"ratelimit-test@example.com\",\r
+
+    \  \"password\": \"IncorrectPassword123!\"\r
+
+    }"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Login is rejected or rate limited\", function () {\r
+
+      \    pm.expect([401, 429]).to.include(pm.response.code);\r
+
+      });\r
+
+      \r
+
+      if (pm.response.code === 429) {\r
+
+      \    pm.test(\"Login rate limiting returns 429\", function () {\r
+
+      \    pm.response.to.have.status(429);\r
+
+      });\r
+
+      \r
+
+      \    pm.collectionVariables.set(\"rateLimitTriggered\", \"true\");\r
+
+      }"
+    language: text/javascript
+order: 40000
