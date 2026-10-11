@@ -5,4 +5,4 @@ export const bookingRules = [
   body('tierId').isMongoId().withMessage('Invalid tier ID'),
 ];
 
-export const bookingIdRule = [param('bookingId').isMongoId().withMessage('Invalid booking ID')];
+export const bookingIdRule = [param('id').isMongoId().withMessage('Invalid booking ID')];

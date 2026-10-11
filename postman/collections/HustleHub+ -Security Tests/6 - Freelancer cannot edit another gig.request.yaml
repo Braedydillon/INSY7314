@@ -32,24 +32,22 @@ auth:
     token: "{{freelancer2Token}}"
 scripts:
   - type: afterResponse
-    code: "\r
+    code: "pm.test(\"Freelancer cannot edit another user's gig\", function () {\r
 
-      pm.test(\"Freelancer cannot edit another user's gig\", function () {\r
-
-      \    pm.response.to.have.status(404);\r
+      \    pm.response.to.have.status(403);\r
 
       });\r
 
       \r
 
-      pm.test(\"Response indicates gig was not found\", function () {\r
+      pm.test(\"Response indicates permission was denied\", function () {\r
 
       \    const response = pm.response.json();\r
 
       \r
 
-      \    pm.expect(response.error).to.eql(\"Gig not found.\");\r
+      \    pm.expect(response.error).to.eql(\"Permission denied.\");\r
 
-      });\r\n"
+      });"
     language: text/javascript
 order: 6000

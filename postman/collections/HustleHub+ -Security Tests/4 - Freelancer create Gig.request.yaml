@@ -62,8 +62,18 @@ scripts:
 
       \    const response = pm.response.json();\r
 
+      \r
+
       \    pm.collectionVariables.set(\"createdGigId\", response.gig.id);\r
 
-      }\r\n"
+      \    pm.collectionVariables.set(\"createdTierId\", response.gig.tiers[0].id);\r
+
+      \r
+
+      \    console.log(\"Created Gig ID:\", response.gig.id);\r
+
+      \    console.log(\"Created Tier ID:\", response.gig.tiers[0].id);\r
+
+      }"
     language: text/javascript
 order: 4000

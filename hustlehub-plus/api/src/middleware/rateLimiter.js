@@ -19,3 +19,13 @@ export const registerLimiter = rateLimit({
         error: 'Too many registration attempts. Please try again in 15 minutes',
     },
 });
+
+export const bookingLimiter = rateLimit ({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: {
+        error: 'Too many booking requests. Please try again in 15 minutes.',
+  },
+});
