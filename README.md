@@ -2,7 +2,11 @@
 
 Hustle Hub is a secure freelance marketplace platform. The purpose of this platform is to allow freelancers to advertise services and clients to browse and book those services.
 
-In this repository, Part 1 built the secure backend foundation – an API used to support user registration and login, built with security in mind. Part 2 expands this into the full marketplace described below.
+In this repository, Part 1 an API used to support user registration and login, built with security as the focus. Part 2 expands this into the full marketplace described below.
+
+## Youtube Video Link
+
+https://youtu.be/LPHy-0MfQyg
 
 ## Group Members
 
