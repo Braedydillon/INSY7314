@@ -90,8 +90,13 @@ Setting up the Front end
 1. cd hustlehub-plus/client
 2. npm install
 3. npm run dev
+
 Once these steps are complete the frontend runs at http://localhost:5173
 
+For testing front end 
+1. cd hustlehub-plus/client
+2. npm install -D vitest@^3 jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event
+3.  Run the command "npm test"
 
 Example 1
 POST /api/auth/register
