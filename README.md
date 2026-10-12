@@ -6,9 +6,9 @@ In this repository, Part 1 built the secure backend foundation – an API used t
 
 ## Group Members
 
-Zachary Handley - ST10435382
-Braedy Dillon - ST10439231
-Joel Napier - ST10457625
+- **Zachary Handley** - ST10435382
+- **Braedy Dillon** - ST10439231
+- **Joel Napier** - ST10457625
 
 ## Intended Users
 
