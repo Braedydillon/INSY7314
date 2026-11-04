@@ -22,7 +22,7 @@ if (USE_HTTPS) {
   try {
     await connectDB();
   } catch (error) {
-    console.error(`Couldnt connect to mongo db: ${error.message}`);
+    console.error(`Could not connect to MongoDB: ${error.message}`);
     process.exit(1);
   }
 

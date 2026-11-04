@@ -12,12 +12,12 @@ import gigRoutes from './routes/gigRoutes.js';
 import bookingsRoutes from './routes/bookingRoutes.js';
 import incomeRoutes from './routes/incomeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import mongoose from 'mongoose';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
-
 
 app.use(
   helmet({
@@ -38,12 +38,13 @@ app.use(
   })
 );
 
-
-app.use(cors({
-  origin: [config.CLIENT_ORIGIN],
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: [config.CLIENT_ORIGIN],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use(express.json({ limit: '10kb' }));
 
@@ -60,11 +61,21 @@ app.use(express.static(clientDistPath));
 
 // React Router fallback for frontend pages
 app.get(/^(?!\/api(?:\/|$)).*/, (req, res, next) => {
-    if (path.extname(req.path)) {
-        return next();
-    }
+  if (path.extname(req.path)) {
+    return next();
+  }
 
-    res.sendFile(path.join(clientDistPath, 'index.html'));
+  res.sendFile(path.join(clientDistPath, 'index.html'));
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  const dbConnected = mongoose.connection.readyState === 1;
+
+  res.status(dbConnected ? 200 : 503).json({
+    status: dbConnected ? 'ok' : 'unavailable',
+    db: dbConnected ? 'connected' : 'disconnected',
+  });
 });
 
 // Error handling
