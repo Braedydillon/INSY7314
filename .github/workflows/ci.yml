@@ -1,0 +1,73 @@
+
+name: HustleHub CI/CD Pipeline
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend Tests and Validation
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: hustlehub-plus/api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: hustlehub-plus/api/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm ci
+
+      - name: Run backend tests
+        run: npm test
+
+      - name: Validate backend JavaScript syntax
+        run: find src -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
+
+  frontend:
+    name: Frontend Tests and Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: hustlehub-plus/client
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: hustlehub-plus/client/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend tests
+        run: npm test
+
+      - name: Build frontend application
+        run: npm run build
+
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: hustlehub-frontend-build
+          path: hustlehub-plus/client/dist/
