@@ -13,6 +13,9 @@
     "sanitize-html": "^2.18.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^17.14.0",
     "newman": "^6.2.3",
     "nodemon": "^3.1.14",
     "yaml": "^2.9.1"
@@ -27,7 +30,8 @@
     "certs": "node generate-certs.cjs",
     "db:rst": "node scripts/db-reset.js",
     "test:api": "newman run ../../postman/HustleHub-Security-Tests.postman_collection.json --insecure",
-    "test": "node --test"
+    "test": "node --test",
+    "lint": "eslint src"
   },
   "keywords": [],
   "author": "",

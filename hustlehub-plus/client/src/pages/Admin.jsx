@@ -71,8 +71,18 @@ export default function Admin() {
   }
 
   useEffect(() => {
-    load().finally(() => setLoading(false))
-  }, [])
+  async function fetchInitialData() {
+    try {
+      await Promise.resolve().then(() => load())
+    } catch (err) {
+      setError(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchInitialData()
+}, [])
 
   async function removeGig(gig) {
     if (!window.confirm(`Remove "${gig.title}"?`)) return

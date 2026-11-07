@@ -64,7 +64,7 @@ export default function Login() {
         <h2>Log In</h2>
 
         <p className="text-muted">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link to="/register" className="text-link">
             Register
           </Link>
