@@ -26,7 +26,8 @@
     "start": "node src/server.js",
     "certs": "node generate-certs.cjs",
     "db:rst": "node scripts/db-reset.js",
-    "test:api": "newman run ../../postman/HustleHub-Security-Tests.postman_collection.json --insecure"
+    "test:api": "newman run ../../postman/HustleHub-Security-Tests.postman_collection.json --insecure",
+    "test": "node --test"
   },
   "keywords": [],
   "author": "",

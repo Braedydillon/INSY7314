@@ -12,19 +12,19 @@ const __dirname = path.dirname(__filename);
 
 const USE_HTTPS = process.env.USE_HTTPS === 'true';
 
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error(`Couldnt connect to mongo db: ${error.message}`);
+    process.exit(1);
+  }
+
 if (USE_HTTPS) {
   const keyPath =
     process.env.SSL_KEY_PATH || path.join(__dirname, '..', 'certs', 'localhost-key.pem');
 
   const certPath =
     process.env.SSL_CERT_PATH || path.join(__dirname, '..', 'certs', 'localhost-cert.pem');
-
-  try {
-    await connectDB();
-  } catch (error) {
-    console.error(`Could not connect to MongoDB: ${error.message}`);
-    process.exit(1);
-  }
 
   try {
     const httpsOptions = {
