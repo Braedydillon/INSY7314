@@ -87,13 +87,18 @@ export async function getBooking(req, res, next) {
 async function changeStatus(req, res, next, { ownerField, from, to, refund }) {
   try {
     const requester = { _id: req.params.id, [ownerField]: req.user.id };
+    const update = { status: to };
+
+    if (to === 'completed') {
+      update.completedAt = new Date();
+    }
 
     const before = await Booking.findOneAndUpdate(
       {
         ...requester,
-        status: mongoose.trusted({ $in: from })
+        status: mongoose.trusted({ $in: from }),
       },
-      { status: to }
+      update
     );
 
     if (!before) {
