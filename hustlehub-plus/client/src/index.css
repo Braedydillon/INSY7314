@@ -593,6 +593,10 @@ textarea {
   margin-bottom: 25px;
 }
 
+.chart-card {
+  margin-bottom: 25px;
+}
+
 .stat-card {
   display: flex;
   flex-direction: column;
