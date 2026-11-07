@@ -18,6 +18,7 @@ const bookingSchema = new mongoose.Schema(
       validate: { validator: Number.isInteger, message: 'totalCents must be a whole number' },
     },
     status: { type: String, enum: BOOKING_STATUSES, default: 'pending' },
+    completedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
