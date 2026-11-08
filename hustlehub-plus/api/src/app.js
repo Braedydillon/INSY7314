@@ -13,8 +13,16 @@ import bookingsRoutes from './routes/bookingRoutes.js';
 import incomeRoutes from './routes/incomeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import mongoose from 'mongoose';
+import { httpLogger } from './middleware/httpLogger.js';
 
 const app = express();
+
+if (process.env.TRUST_PROXY) {
+  app.set('trust proxy', Number(process.env.TRUST_PROXY));
+}
+
+app.use(httpLogger);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const clientDistPath = path.resolve(__dirname, '../../client/dist');

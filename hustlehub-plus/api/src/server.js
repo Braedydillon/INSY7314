@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import app from './app.js';
 import config from './config/env.js';
 import { connectDB } from './config/db.js';
+import { logger } from './config/logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +16,7 @@ const USE_HTTPS = process.env.USE_HTTPS === 'true';
   try {
     await connectDB();
   } catch (error) {
-    console.error(`Couldnt connect to mongo db: ${error.message}`);
+    logger.fatal({ err: error }, 'Could not connect to MongoDB');
     process.exit(1);
   }
 
@@ -33,15 +34,16 @@ if (USE_HTTPS) {
     };
 
     https.createServer(httpsOptions, app).listen(config.PORT, () => {
-      console.log(`HTTPS server running on port ${config.PORT}`);
+      logger.info(`HTTPS server running on port ${config.PORT}`);
     });
   } catch {
-    console.warn(' Failed to start HTTPS server: Missing or invalid certificate files.');
-    console.warn('Run your certificate generation script first, or set USE_HTTPS=false.');
+    logger.fatal(
+      'Failed to start HTTPS server: missing or invalid certificate files. Run your certificate generation script first, or set USE_HTTPS=false.'
+    );
     process.exit(1);
   }
 } else {
   app.listen(config.PORT, () => {
-    console.log(`HTTPs server running on port ${config.PORT}`);
+    logger.info(`HTTP server running on port ${config.PORT}`);
   });
 }
