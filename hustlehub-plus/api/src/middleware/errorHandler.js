@@ -10,7 +10,7 @@ export function errorHandler(err, req, res, _next) {
   if (status >= 500) {
     req.log.error({ err }, 'Unhandled error');
   } else {
-    req.log.warn({ err: { message: err.message, type: err.type } }, 'Request error');
+    req.log.warn({ error: { message: err.message, type: err.type } }, 'Request error');
   }
 
   res.status(status).json({

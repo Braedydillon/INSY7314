@@ -111,6 +111,11 @@ export async function deleteGig(req, res, next) {
     gig.status = 'removed';
     await gig.save();
 
+    req.log.info(
+      { event: 'gig.removed', gigId: gig.id, actorId: req.user.id, actorRole: req.user.role },
+      'Gig removed'
+    );
+
     return res.status(204).send();
   } catch (error) {
     next(error);

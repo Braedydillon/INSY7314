@@ -38,8 +38,35 @@ export async function createBooking(req, res, next) {
       });
     } catch (error) {
       await Booking.deleteOne({ _id: booking._id });
+      req.log.error(
+        { event: 'booking.rolled_back', bookingId: booking.id, err: error },
+        'Payment failed; booking removed'
+      );
       throw error;
     }
+
+    req.log.info(
+      {
+        event: 'booking.created',
+        bookingId: booking.id,
+        gigId: gig.id,
+        clientId: req.user.id,
+        freelancerId: String(gig.freelancerId),
+        amountCents: booking.totalCents,
+      },
+      'Booking created'
+    );
+
+    req.log.info(
+      {
+        event: 'transaction.recorded',
+        transactionId: payment.id,
+        bookingId: booking.id,
+        type: 'payment',
+        amountCents: payment.amountCents,
+      },
+      'Payment recorded'
+    );
 
     return res.status(201).json({ booking, transaction: payment });
   } catch (error) {
@@ -108,6 +135,16 @@ async function changeStatus(req, res, next, { ownerField, from, to, refund }) {
         return res.status(404).json({ error: 'Booking not found.' });
       }
 
+      req.log.warn(
+        {
+          event: 'booking.status_conflict',
+          bookingId: exists.id,
+          currentStatus: exists.status,
+          attempted: to,
+        },
+        'Booking status conflict'
+      );
+
       return res.status(409).json({ error: `This booking is already ${exists.status}.` });
     }
 
@@ -124,9 +161,37 @@ async function changeStatus(req, res, next, { ownerField, from, to, refund }) {
         });
       } catch (error) {
         await Booking.updateOne({ _id: before._id }, { status: before.status });
+        req.log.error(
+          { event: 'booking.status_rolled_back', bookingId: before.id, err: error },
+          'Refund failed; status restored'
+        );
         throw error;
       }
     }
+
+    if (transaction) {
+      req.log.info(
+        {
+          event: 'transaction.recorded',
+          transactionId: transaction.id,
+          bookingId: before.id,
+          type: 'refund',
+          amountCents: transaction.amountCents,
+        },
+        'Refund recorded'
+      );
+    }
+
+    req.log.info(
+      {
+        event: 'booking.status_changed',
+        bookingId: before.id,
+        from: before.status,
+        to,
+        actorId: req.user.id,
+      },
+      'Booking status changed'
+    );
 
     const booking = await Booking.findById(before._id);
 

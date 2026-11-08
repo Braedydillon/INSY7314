@@ -18,12 +18,13 @@ function createToken(user) {
 }
 
 export async function register(req, res, next) {
-  try {
-    const { email, password, name, surname, displayName, role, contactMethod } = matchedData(req);
+  const { email, password, name, surname, displayName, role, contactMethod } = matchedData(req);
 
+  try {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
+      req.log.warn({ event: 'auth.register.duplicate', email }, 'Registration with an existing email');
       return res.status(409).json({ error: 'User already exists' });
     }
 
@@ -38,9 +39,12 @@ export async function register(req, res, next) {
       contactMethod: contactMethod || '',
     });
 
+    req.log.info({ event: 'auth.registered', userId: user.id, role: user.role }, 'User registered');
+
     return res.status(201).json({ message: 'User created successfully', user: user.toJSON() });
   } catch (error) {
     if (error.code === 11000) {
+      req.log.warn({ event: 'auth.register.duplicate', email }, 'Registration with an existing email');
       return res.status(409).json({ error: 'Email already registered' });
     }
     next(error);
@@ -54,16 +58,29 @@ export async function login(req, res, next) {
     const user = await User.findOne({ email }).select('+passwordHash');
 
     if (!user) {
+      req.log.warn(
+        { event: 'auth.login.failed', reason: 'unknown_user', email, ip: req.ip },
+        'Login failed'
+      );
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
+      req.log.warn(
+        { event: 'auth.login.failed', reason: 'wrong_password', email, userId: user.id, ip: req.ip },
+        'Login failed'
+      );
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const token = createToken(user);
+
+    req.log.info(
+      { event: 'auth.login.succeeded', email, userId: user.id, role: user.role, ip: req.ip },
+      'Login succeeded'
+    );
 
     return res.status(200).json({ message: 'Login successful', token, user: user.toJSON() });
   } catch (error) {

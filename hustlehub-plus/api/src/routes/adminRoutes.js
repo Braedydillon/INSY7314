@@ -15,6 +15,11 @@ const router = express.Router();
 router.use(authenticate);
 router.use(authorise('admin'));
 
+router.use((req, res, next) => {
+  req.log.info({ event: 'admin.viewed', adminId: req.user.id, resource: req.path }, 'Admin viewed records');
+  next();
+});
+
 router.get('/users', getAdminUsers);
 router.get('/gigs', getAdminGigs);
 router.get('/bookings', getAdminBookings);
