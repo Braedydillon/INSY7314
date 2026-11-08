@@ -8,6 +8,7 @@ function createToken(user) {
   return jwt.sign(
     {
       id: user.id,
+      ver: user.tokenVersion,
     },
     config.JWT_SECRET,
     {

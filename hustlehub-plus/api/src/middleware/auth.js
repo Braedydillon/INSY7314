@@ -41,6 +41,10 @@ export async function authenticate(req, res, next) {
       return reject(req, res, 'user_not_found', 'User no longer exists.');
     }
 
+    if ((decoded.ver ?? 0) !== user.tokenVersion) {
+      return reject(req, res, 'revoked', 'Your session has ended. Please log in again.');
+    }
+
     req.user = { id: user.id, email: user.email, role: user.role };
 
     next();

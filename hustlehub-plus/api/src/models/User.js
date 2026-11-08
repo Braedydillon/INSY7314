@@ -10,9 +10,14 @@ const userSchema = new mongoose.Schema(
     displayName: { type: String, required: true, trim: true, minlength: 1, maxlength: 40 },
     role: { type: String, enum: ROLES, required: true },
     contactMethod: { type: String, trim: true, maxlength: 120, default: '' },
+    tokenVersion: { type: Number, default: 0 },
+    passwordResetTokenHash: { type: String, select: false },
+    passwordResetExpires: { type: Date, select: false },
   },
   { timestamps: true }
 );
+
+userSchema.index({ passwordResetTokenHash: 1 }, { sparse: true });
 
 userSchema.set('toJSON', {
   transform: (doc, ret) => {
@@ -20,6 +25,9 @@ userSchema.set('toJSON', {
     delete ret._id;
     delete ret.__v;
     delete ret.passwordHash;
+    delete ret.tokenVersion;
+    delete ret.passwordResetTokenHash;
+    delete ret.passwordResetExpires;
     return ret;
   },
 });
