@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import { matchedData } from 'express-validator';
 import config from '../config/env.js';
 import User from '../models/User.js';
+import {  isAccountLocked,recordFailedLogin, clearFailedLogins} from '../services/loginLockout.js';
+
 
 function createToken(user) {
   return jwt.sign(
@@ -56,7 +58,12 @@ export async function login(req, res, next) {
   try {
     const { email, password } = matchedData(req);
 
-    const user = await User.findOne({ email }).select('+passwordHash');
+    const user = await User.findOne({ email }).select('+passwordHash +failedLoginAttempts ' +
+        '+firstFailedLoginAt +lockUntil');
+
+            const invalidMessage = {
+      error: 'Invalid email or password'
+      };
 
     if (!user) {
       req.log.warn(
@@ -66,22 +73,54 @@ export async function login(req, res, next) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
+        if (isAccountLocked(user)) {
+      req.log.warn({
+        event: 'auth.login.blocked',
+        userId: user.id,
+        ip: req.ip
+      }, 'Login blocked by temporary account lockout');
+
+      return res.status(401).json(invalidMessage);
+    }
+
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
-    if (!passwordMatch) {
-      req.log.warn(
-        { event: 'auth.login.failed', reason: 'wrong_password', email, userId: user.id, ip: req.ip },
-        'Login failed'
+     if (!passwordMatch) {
+      const newlyLocked = recordFailedLogin(user);
+      await user.save();
+
+      req.log.warn({
+        event: newlyLocked
+          ? 'auth.account.locked'
+          : 'auth.login.failed',
+        reason: 'wrong_password',
+        userId: user.id,
+        ip: req.ip
+      }, newlyLocked
+        ? 'Account temporarily locked'
+        : 'Login failed'
       );
-      return res.status(401).json({ error: 'Invalid email or password' });
+       return res.status(401).json(invalidMessage);
     }
+
+   
+    // Successful login: reset failed attempts
+    clearFailedLogins(user);
+    await user.save();
 
     const token = createToken(user);
 
     req.log.info(
-      { event: 'auth.login.succeeded', email, userId: user.id, role: user.role, ip: req.ip },
+      {
+        event: 'auth.login.succeeded',
+        email,
+        userId: user.id,
+        role: user.role,
+        ip: req.ip
+      },
       'Login succeeded'
     );
+
 
     return res.status(200).json({ message: 'Login successful', token, user: user.toJSON() });
   } catch (error) {
