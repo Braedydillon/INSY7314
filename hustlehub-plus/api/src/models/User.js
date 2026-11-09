@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema(
     tokenVersion: { type: Number, default: 0 },
     passwordResetTokenHash: { type: String, select: false },
     passwordResetExpires: { type: Date, select: false },
+    failedLoginAttempts: {type: Number,default: 0,select: false},
+    firstFailedLoginAt: {type: Date,default: null,select: false},
+    lockUntil: {type: Date,default: null,select: false},
+
   },
   { timestamps: true }
 );
@@ -28,6 +32,9 @@ userSchema.set('toJSON', {
     delete ret.tokenVersion;
     delete ret.passwordResetTokenHash;
     delete ret.passwordResetExpires;
+    delete ret.failedLoginAttempts;
+    delete ret.firstFailedLoginAt;
+    delete ret.lockUntil;
     return ret;
   },
 });

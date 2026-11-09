@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import { matchedData } from 'express-validator';
 import config from '../config/env.js';
 import User from '../models/User.js';
+import { isAccountLocked, recordFailedLogin, clearFailedLogins } from '../services/loginLockout.js';
+
 import { createResetToken, hashResetToken } from '../services/resetTokens.js';
 import { sendPasswordResetEmail } from '../services/mailer.js';
 
@@ -28,7 +30,10 @@ export async function register(req, res, next) {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      req.log.warn({ event: 'auth.register.duplicate', email }, 'Registration with an existing email');
+      req.log.warn(
+        { event: 'auth.register.duplicate', email },
+        'Registration with an existing email'
+      );
       return res.status(409).json({ error: 'User already exists' });
     }
 
@@ -48,18 +53,44 @@ export async function register(req, res, next) {
     return res.status(201).json({ message: 'User created successfully', user: user.toJSON() });
   } catch (error) {
     if (error.code === 11000) {
-      req.log.warn({ event: 'auth.register.duplicate', email }, 'Registration with an existing email');
+      req.log.warn(
+        { event: 'auth.register.duplicate', email },
+        'Registration with an existing email'
+      );
       return res.status(409).json({ error: 'Email already registered' });
     }
     next(error);
   }
 }
 
+function sendLockedResponse(res, user) {
+  const secondsRemaining = Math.max(
+    1,
+    Math.ceil((new Date(user.lockUntil).getTime() - Date.now()) / 1000)
+  );
+
+  const minutesRemaining = Math.ceil(secondsRemaining / 60);
+
+  res.set('Retry-After', String(secondsRemaining));
+
+  return res.status(423).json({
+    code: 'ACCOUNT_LOCKED',
+    error: `Account temporarily locked. Try again in ${minutesRemaining} minute(s).`,
+    retryAfterSeconds: secondsRemaining,
+  });
+}
+
 export async function login(req, res, next) {
   try {
     const { email, password } = matchedData(req);
 
-    const user = await User.findOne({ email }).select('+passwordHash');
+    const user = await User.findOne({ email }).select(
+      '+passwordHash +failedLoginAttempts ' + '+firstFailedLoginAt +lockUntil'
+    );
+
+    const invalidMessage = {
+      error: 'Invalid email or password',
+    };
 
     if (!user) {
       req.log.warn(
@@ -69,20 +100,56 @@ export async function login(req, res, next) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
+    if (isAccountLocked(user)) {
+      req.log.warn(
+        {
+          event: 'auth.login.blocked',
+          userId: user.id,
+          ip: req.ip,
+        },
+        'Login blocked by temporary account lockout'
+      );
+
+      return sendLockedResponse(res, user);
+    }
+
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
+      const newlyLocked = recordFailedLogin(user);
+      await user.save();
+
       req.log.warn(
-        { event: 'auth.login.failed', reason: 'wrong_password', email, userId: user.id, ip: req.ip },
-        'Login failed'
+        {
+          event: newlyLocked ? 'auth.account.locked' : 'auth.login.failed',
+          reason: 'wrong_password',
+          userId: user.id,
+          ip: req.ip,
+        },
+        newlyLocked ? 'Account temporarily locked' : 'Login failed'
       );
-      return res.status(401).json({ error: 'Invalid email or password' });
+
+      if (newlyLocked) {
+        return sendLockedResponse(res, user);
+      }
+
+      return res.status(401).json(invalidMessage);
     }
+
+    // Successful login: reset failed attempts
+    clearFailedLogins(user);
+    await user.save();
 
     const token = createToken(user);
 
     req.log.info(
-      { event: 'auth.login.succeeded', email, userId: user.id, role: user.role, ip: req.ip },
+      {
+        event: 'auth.login.succeeded',
+        email,
+        userId: user.id,
+        role: user.role,
+        ip: req.ip,
+      },
       'Login succeeded'
     );
 
@@ -112,7 +179,10 @@ export async function forgotPassword(req, res, next) {
 
       sendPasswordResetEmail(user.email, resetUrl)
         .then(() =>
-          req.log.info({ event: 'auth.password_reset.email_sent', userId: user.id }, 'Reset email sent')
+          req.log.info(
+            { event: 'auth.password_reset.email_sent', userId: user.id },
+            'Reset email sent'
+          )
         )
         .catch((err) =>
           req.log.error(
@@ -143,7 +213,10 @@ export async function resetPassword(req, res, next) {
     };
 
     if (!(await User.exists(tokenFilter))) {
-      req.log.warn({ event: 'auth.password_reset.invalid_token', ip: req.ip }, 'Invalid reset token');
+      req.log.warn(
+        { event: 'auth.password_reset.invalid_token', ip: req.ip },
+        'Invalid reset token'
+      );
       return res.status(400).json({ error: RESET_INVALID });
     }
 
@@ -160,7 +233,10 @@ export async function resetPassword(req, res, next) {
     );
 
     if (!user) {
-      req.log.warn({ event: 'auth.password_reset.invalid_token', ip: req.ip }, 'Reset token already used');
+      req.log.warn(
+        { event: 'auth.password_reset.invalid_token', ip: req.ip },
+        'Reset token already used'
+      );
       return res.status(400).json({ error: RESET_INVALID });
     }
 

@@ -115,6 +115,16 @@ Declined and cancelled bookings count towards neither, because they were refunde
 
 **HTTPS:** The server is served over HTTPS by default, using a locally generated self-signed certificate. Without HTTPS, tokens and credentials are sent over the network in plain text to anyone in a position to intercept the traffic. HTTPS can be disabled through `USE_HTTPS=false` for convenience, but is enabled by default on purpose.
 
+**Feature 2 - Account Lockout**
+
+The account lockout feature is implemented in the backend to ensure that brute force attacks are prevented. After five incorrect password attempts within 15 minutes, the users account is temporarily locked for 15 minutes.
+
+The system stores failed attempts in MongoDB, automatically unlocks accounts after the timeout, and resets the counter after a successful login. Users are shown a message indicating how long their account is locked.
+
+Security events are recorded through the logging system
+
+Testing: Four automated unit tests were created, all passing successfully. Manual testing also confirmed that accounts are locked after five failed attempts and further login attempts are blocked.
+
 **Controlled error handling**
 
 **Ownership checks:** Freelancers can only update, remove or reactivate their own gigs, and can only accept, decline or complete bookings on their own gigs. Clients can only cancel their own bookings. The owner of a gig and the client on a booking are always taken from the logged-in user's token, never from the request body.
