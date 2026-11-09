@@ -54,6 +54,26 @@ export async function register(req, res, next) {
   }
 }
 
+
+function sendLockedResponse(res, user) {
+  const secondsRemaining = Math.max(
+    1,
+    Math.ceil(
+      (new Date(user.lockUntil).getTime() - Date.now()) / 1000
+    )
+  );
+
+  const minutesRemaining = Math.ceil(secondsRemaining / 60);
+
+  res.set('Retry-After', String(secondsRemaining));
+
+  return res.status(423).json({
+    code: 'ACCOUNT_LOCKED',
+    error: `Account temporarily locked. Try again in ${minutesRemaining} minute(s).`,
+    retryAfterSeconds: secondsRemaining
+  });
+}
+
 export async function login(req, res, next) {
   try {
     const { email, password } = matchedData(req);
@@ -73,15 +93,16 @@ export async function login(req, res, next) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-        if (isAccountLocked(user)) {
+    if (isAccountLocked(user)) {
       req.log.warn({
         event: 'auth.login.blocked',
         userId: user.id,
         ip: req.ip
       }, 'Login blocked by temporary account lockout');
 
-      return res.status(401).json(invalidMessage);
+      return sendLockedResponse(res, user);
     }
+
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
@@ -100,7 +121,13 @@ export async function login(req, res, next) {
         ? 'Account temporarily locked'
         : 'Login failed'
       );
-       return res.status(401).json(invalidMessage);
+       
+    if (newlyLocked) {
+      return sendLockedResponse(res, user);
+    }
+
+    return res.status(401).json(invalidMessage);
+
     }
 
    
