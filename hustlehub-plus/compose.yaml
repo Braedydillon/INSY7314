@@ -20,6 +20,10 @@ services:
       USE_HTTPS: "false"
       MONGODB_URI: mongodb://mongo:27017/hustlehub
       CLIENT_ORIGIN: http://localhost:8081
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      APP_URL: http://localhost:8081
+      TRUST_PROXY: "1"
     depends_on:
       mongo:
         condition: service_healthy
@@ -31,6 +35,12 @@ services:
     - "127.0.0.1:8081:80"
     depends_on:
       - api
+
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8025:8025"
 
 volumes:
   mongo_data:
