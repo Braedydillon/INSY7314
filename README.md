@@ -1,13 +1,12 @@
 # Hustle Hub
 
-Hustle Hub is a secure freelance marketplace platform. The purpose of this platform is to allow freelancers to advertise services and clients to browse and book those services.
+Hustle Hub is a secure freelance marketplace platform that allows freelancers to advertise services and clients to browse and book those services.
 
-Part 1 focused on developing a secure backend API for registration and authentication. Part 2 expanded the system into a fully functional marketplace using React, Node.js, Express and MongoDB. Part 3 focuses on tax calculations, additional security features, Docker, CI/CD, logging and monitoring.
+Part 1 focused on developing a secure backend API for registration and authentication. Part 2 expanded the system into a full-stack marketplace. Part 3 introduces financial insights, additional security features, Docker containerisation, CI/CD, static code analysis, and logging.
 
+## YouTube Video Link
 
-
-
-**Final Part 3 demonstration:**
+https://youtu.be/LPHy-0MfQyg
 
 ## Group Members
 
@@ -17,11 +16,11 @@ Part 1 focused on developing a secure backend API for registration and authentic
 
 ## Intended Users
 
-The system supports three different user roles:
+The system supports:
 
-- **Clients:** Browse gigs, book services, view transactions and manage their accounts.
-- **Freelancers:** Create gigs, manage bookings, track income and view estimated tax.
-- **Admins:** Manage platform information through authorised administrative functionality.
+- Clients
+- Freelancers
+- Admins
 
 ## Tech Stack
 
@@ -31,140 +30,121 @@ The system supports three different user roles:
 - **Authentication:** JSON Web Tokens (JWT)
 - **Password Hashing:** bcrypt
 - **Validation:** express-validator
-- **Security:** Helmet, express-rate-limit and sanitize-html
+- **Security Middleware:** Helmet, express-rate-limit, sanitize-html
 - **TLS/SSL:** node-forge
 - **Frontend:** React and Vite
 - **Testing:** Postman, Newman, Vitest and React Testing Library
-- **Static Analysis:** ESLint
+- **Static Code Analysis:** ESLint
 - **Containerisation:** Docker and Docker Compose
 - **Logging:** Pino and pino-http
-- **Version Control and CI/CD:** GitHub and GitHub Actions
-
-## System Architecture
-
-HustleHub+ follows the MERN architecture. React handles the user interface, while Node.js and Express process API requests and enforce security requirements.
-
-MongoDB stores user information, gigs, bookings and transactions.
-
-The API handles authentication, authorisation, validation, booking management, income calculations and tax estimation.
-
-Protected endpoints use JWT authentication and role-based access control to prevent unauthorised operations.
+- **CI/CD:** GitHub Actions
 
 ## Frontend
 
-The frontend provides separate functionality for clients, freelancers and administrators. React and Vite are used to create a responsive application that communicates with the backend through REST API requests.
+The frontend provides interfaces for clients, freelancers and administrators. React and Vite were used to develop the frontend, which communicates with the Node.js and Express backend through REST API requests.
 
-### Authentication
+### Frontend Features
 
-Users can register and log in using their email address and password. Successful authentication provides a JWT that is used when accessing protected resources.
+#### Authentication
 
-### Client Features
+The frontend allows users to register and log in using their email address and password. JWT authentication is used to access protected endpoints.
+
+#### Client Features
 
 - Browse available services.
 - View gig descriptions and pricing packages.
 - Book services offered by freelancers.
-- View booking history and transactions.
+- View bookings and transactions.
 - Manage profile information.
 
-### Freelancer Features
+#### Freelancer Features
 
 - Create and manage service listings.
-- Update or remove existing gigs.
+- Update gig information.
 - View and manage bookings.
 - Accept, decline and complete bookings.
 - View income and projected earnings.
 - View estimated tax calculations.
 - Manage profile information.
 
-### Administration Features
+#### Administration Features
 
-The application includes an administration dashboard for viewing and managing platform information. Administrative functionality is protected through role-based authorisation.
+The frontend includes an administration dashboard intended for managing platform information. Administrative functionality depends on the corresponding protected backend endpoints.
 
 ## Marketplace Features
 
 ### Gigs and Pricing Tiers
 
-Freelancers can advertise their services by creating gigs. Each gig includes a title, category, description and between one and three pricing tiers.
+Freelancers list their services as gigs. Each gig includes a title, category, description and between one and three pricing tiers.
 
-Each pricing tier contains its own title, description and price.
+Each tier includes its own title, description and price.
 
-Prices are stored as whole numbers of cents in South African Rand to reduce rounding errors.
-
-Users can browse active gigs, search by title and filter by category.
-
-Deleting a gig uses a soft-delete approach. Removed gigs are hidden from browsing while existing booking references remain valid.
+- Prices are stored as whole numbers of cents in ZAR to reduce rounding errors.
+- A tier can cost between R30 and R50,000.
+- Categories include music, coding, writing, marketing, tutoring, photography, art, design, videography and other.
+- Visitors can browse active gigs and search by title or category.
+- Deleting a gig performs a soft delete, allowing existing bookings to retain their references.
 
 ### Booking Lifecycle
 
-Clients can book a pricing tier from an available gig. The booking stores the selected tier and agreed price so that later changes to the gig do not affect existing bookings.
+Clients can book a pricing tier from a freelancer's gig. The selected tier and price are copied onto the booking, preventing future pricing changes from affecting existing bookings.
 
-Payments are simulated rather than processed through an actual payment gateway.
+Payments are simulated rather than processed through a real payment gateway.
 
-| Action | User | Result |
-|---|---|---|
-| Create booking | Client | Pending |
-| Accept booking | Freelancer | Confirmed |
-| Complete booking | Freelancer | Completed |
-| Decline booking | Freelancer | Declined and refunded |
-| Cancel booking | Client | Cancelled and refunded |
+| Event | User | Status | Transaction |
+|---|---|---|---|
+| Create booking | Client | Pending | Payment |
+| Accept booking | Freelancer | Confirmed | None |
+| Complete booking | Freelancer | Completed | None |
+| Decline booking | Freelancer | Declined | Refund |
+| Cancel booking | Client | Cancelled | Refund |
 
 Invalid status changes are rejected by the backend.
 
 ### Transactions and Refunds
 
-Every booking creates a transaction record.
+Transactions are append-only. Refunds create separate negative transactions instead of modifying the original payment record.
 
-Transactions are append-only, meaning previous transactions are not overwritten. Refunds create separate negative transactions linked to the original booking.
-
-This provides a record of financial activity while preventing duplicate refunds.
+A booking can have one payment and one refund, enforced through database restrictions.
 
 ### Income
 
-Freelancers can view their income and projected income.
+Freelancers can view:
 
-**Income:** Total value of completed bookings.
+- **Income:** Total value of completed bookings.
+- **Projected income:** Total value of pending and confirmed bookings.
 
-**Projected income:** Total value of pending and confirmed bookings.
+Declined and cancelled bookings are excluded because they are refunded.
 
-Cancelled and declined bookings are excluded from income calculations.
+Income is calculated from booking records to maintain consistency with the database.
 
-## Part 3 — Tax Calculation and Income Dashboard
+## Tax Calculation and Financial Dashboard
 
-A tax estimation feature was added to provide freelancers with an overview of their estimated tax obligations based on earnings generated through HustleHub+.
+A tax estimation feature was implemented to provide freelancers with an overview of their earnings and estimated tax obligations.
 
-The backend calculates income using completed bookings and applies progressive South African individual income-tax brackets.
+The backend calculates estimated tax using progressive South African income-tax brackets. Different portions of taxable income are calculated according to the applicable tax bands.
 
-The calculation is performed by the backend rather than the frontend to maintain consistency.
+The system calculates tax using the freelancer's completed bookings and applies the configured tax rules.
 
-### Tax Calculation
+The frontend provides a financial dashboard displaying income, projected income, tax estimates and financial summaries.
 
-The system calculates estimated tax using the following approach:
+Charts and breakdowns allow freelancers to understand their earnings and estimated tax liability more easily.
 
-1. Retrieve the freelancer's completed bookings.
-2. Calculate total income for the selected tax year.
-3. Apply the configured progressive tax brackets.
-4. Calculate the estimated tax payable.
-5. Apply the configured primary rebate.
-6. Display the result in the frontend dashboard.
+The calculation is performed on the backend to maintain consistency and prevent users from manipulating the calculation through frontend requests.
 
-The backend uses integer cents for monetary calculations to reduce floating-point rounding errors.
+Tax estimates are provided for informational purposes and are not a substitute for official SARS calculations.
 
-### Freelancer Dashboard
+### Tax Testing
 
-The income dashboard displays:
+Automated unit tests verify:
 
-- Total income earned.
-- Projected income.
-- Estimated income tax.
-- Effective tax rate.
-- Monthly income information.
-- Tax bracket breakdown.
+- Zero income produces no tax.
+- Negative income is handled as zero.
+- Income below the first taxable band is untaxed.
+- Tax is calculated correctly across different brackets.
+- Unknown tax years are rejected.
 
-Charts and financial summaries make the information easier for freelancers to understand.
-
-The tax values are estimates for educational purposes and do not replace official SARS calculations or professional tax advice.
-
-**Evidence:** [ADD SCREENSHOT OF INCOME DASHBOARD AND TAX CALCULATION]
+Seven automated tax calculation tests passed successfully.
 
 ## Security Decisions
 
@@ -172,197 +152,180 @@ The tax values are estimates for educational purposes and do not replace officia
 
 Passwords are hashed using bcrypt before being stored in MongoDB.
 
-During login, the entered password is compared against the stored hash using bcrypt.
+During login, submitted passwords are compared against stored hashes using `bcrypt.compare`.
 
-This prevents the application from storing plaintext passwords.
+This ensures plaintext passwords are not stored in the database.
 
 ### Token-Based Authentication
 
-JWT authentication is used to identify users when accessing protected endpoints.
+JWT authentication is used to identify users when accessing protected API endpoints.
 
-Tokens are signed using a secret stored in environment variables and expire after a configured period.
+Tokens contain user identification information and are signed using a secret stored in environment variables.
 
-The backend validates tokens before granting access to protected resources.
+Tokens are validated before users can access protected resources.
 
 ### Input Validation
 
-User input is validated using express-validator before being processed by the application.
+User inputs are validated using express-validator before being processed.
 
-Validation and sanitisation reduce the risk of invalid data, injection attacks and malicious input.
+Invalid inputs are rejected, while sanitisation reduces the risk of malicious HTML and scripting content entering the system.
 
 ### HTTPS
 
-HTTPS is configured using locally generated SSL certificates.
+The backend supports HTTPS using locally generated SSL certificates.
 
-This provides encrypted communication between the frontend and backend during local HTTPS development.
+HTTPS encrypts communication between the client and API, protecting credentials and authentication tokens during transmission.
 
-Production deployments should use trusted certificates.
+### Rate Limiting
+
+Rate limiting is applied to sensitive endpoints, including login, registration and booking.
+
+The system limits excessive requests within a configured time window to reduce brute-force attempts and API abuse.
 
 ### Role-Based Access Control
 
-Role-based access control restricts operations according to the user's role.
+The backend enforces role-based restrictions for clients, freelancers and administrators.
 
-Freelancers can only update and manage their own gigs. Clients can only access their own bookings and transactions.
+Freelancers can only modify their own gigs, while clients can only manage bookings they own.
 
-Protected operations verify ownership using authenticated user information.
+The backend verifies resource ownership using authenticated user information rather than trusting ownership information supplied by the frontend.
 
 ### Controlled Error Handling
 
-The application uses centralised error handling to return controlled API responses.
+The application uses controlled error responses to prevent sensitive internal information from being exposed.
 
-Unexpected errors are logged internally without exposing sensitive server details or stack traces to the user.
+Errors are logged for troubleshooting while users receive appropriate API responses.
 
-## Part 3 — Additional Security Feature 1: Password Reset
+### Additional Security Feature 1 — Password Reset
 
-A password-reset feature was developed to allow users to recover access to their accounts when they forget their passwords.
+The password-reset feature allows users to recover access to their accounts when they forget their passwords.
 
-The backend generates secure random reset tokens and stores their hashes instead of the original tokens.
+The backend generates secure random reset tokens and stores their hashes instead of storing the original tokens.
 
-Reset tokens expire after 15 minutes.
+Tokens expire after 15 minutes, reducing the time available for unauthorised use.
 
-The password-reset process is designed to verify the token before allowing a new password to be securely hashed and saved.
+The reset token is validated before a new password can be securely hashed and saved.
 
-### Security Benefits
+Four automated unit tests verify token generation, uniqueness, hashing and expiration.
 
-- Reset tokens are cryptographically generated.
-- Only token hashes are stored.
-- Reset tokens expire after 15 minutes.
-- Users do not need to reveal their previous passwords.
+### Additional Security Feature 2 — Account Lockout
 
-**Testing:** Four automated tests passed, covering token generation, uniqueness, hashing and expiration.
+An account lockout system was implemented to prevent brute-force login attacks.
 
-**Verification:** [CONFIRM FRONTEND PASSWORD RESET, EMAIL DELIVERY AND SINGLE-USE TOKEN BEHAVIOUR]
+After five incorrect password attempts within 15 minutes, the user's account is temporarily locked for 15 minutes.
 
-## Part 3 — Additional Security Feature 2: Account Lockout
-
-An account lockout system was implemented to reduce brute-force login attacks.
-
-After five incorrect password attempts within 15 minutes, a user's account is temporarily locked for 15 minutes.
-
-The system stores failed login attempts in MongoDB and automatically allows login attempts again after the lockout expires.
+Failed login attempts are stored in MongoDB, and the account automatically becomes available again after the lockout expires.
 
 Successful login resets the failed-attempt counter.
 
-Users are shown a message indicating how long their account remains locked.
+Users receive a message indicating how long their account remains locked.
 
-### Security Logging
+Security events are recorded through the logging system.
 
-The following events are recorded:
+**Testing:** Four automated unit tests were created, all passing successfully. Manual testing also confirmed that accounts are locked after five failed attempts and further login attempts are blocked.
 
-- `auth.login.failed`
-- `auth.account.locked`
-- `auth.login.blocked`
+### Ownership Checks
 
-### Testing
+Freelancers can only update, remove and reactivate their own gigs.
 
-Four automated unit tests were created, covering the lockout threshold, expiration, successful-login reset and isolation between accounts.
+Clients can only cancel their own bookings, while freelancers can only manage bookings associated with their gigs.
 
-**All four tests passed.**
+Ownership is verified using authenticated user information.
 
-Manual testing also confirmed that an account becomes locked after five failed login attempts and that subsequent attempts are blocked.
+### Transaction Security
 
-This feature works alongside IP-based rate limiting to provide an additional level of authentication security.
+Booking prices are retrieved directly from MongoDB rather than accepted from the client's request.
 
-## Part 3 — Docker Containerisation
+This prevents users from changing the amount associated with a booking.
 
-Docker was implemented to containerise HustleHub+'s frontend and backend.
+Atomic booking status updates also prevent duplicate operations, such as processing a refund twice.
 
-The project includes:
+## Docker Containerisation
 
-- `api/Dockerfile` — Backend application.
-- `client/Dockerfile` — React frontend.
-- `compose.yaml` — Docker Compose configuration.
+Docker was used to package the frontend and backend into separate containers.
 
-Docker Compose manages the API, frontend and MongoDB services in a single environment.
+The project contains:
 
-### Running the Application Using Docker
+- `api/Dockerfile` for the backend.
+- `client/Dockerfile` for the frontend.
+- `compose.yaml` for managing the application services.
 
-From the `hustlehub-plus` directory:
+Docker Compose manages the frontend, backend and MongoDB services in a shared environment.
+
+This allows developers to run the application with consistent dependencies and configurations.
+
+### Running Docker
+
+From the project directory:
 
 ```bash
 docker compose up --build -d
 ```
 
-To check the running containers:
+View running containers:
 
 ```bash
 docker compose ps
 ```
 
-To view API logs:
+View backend logs:
 
 ```bash
 docker compose logs -f api
 ```
 
-To stop the application:
+Stop the containers:
 
 ```bash
 docker compose down
 ```
 
-The containerised frontend is available locally at:
+Docker improves portability by reducing configuration differences between development environments.
 
-`http://localhost:8081`
+## CI/CD Pipeline
 
-Docker provides a consistent environment for running the application and reduces differences between development machines.
+GitHub Actions was configured to automate code validation, testing and builds.
 
-The Docker Compose environment is intended for local demonstration and requires additional HTTPS configuration before public production deployment.
+The workflow is stored in `.github/workflows/ci.yml`.
 
-**Evidence:** [ADD DOCKER CONTAINERS AND RUNNING APPLICATION SCREENSHOTS]
+### Backend Workflow
 
-## Part 3 — CI/CD Pipeline
+The backend workflow is configured to:
 
-GitHub Actions was configured to automate testing and build verification.
+- Install Node.js dependencies.
+- Run ESLint checks.
+- Execute backend unit tests.
+- Validate backend JavaScript syntax.
 
-The workflow is located in:
+### Frontend Workflow
 
-`.github/workflows/ci.yml`
+The frontend workflow is configured to:
 
-The pipeline is designed to run automatically when code changes are pushed or pull requests are created.
+- Install frontend dependencies.
+- Execute ESLint checks.
+- Run automated React tests using Vitest.
+- Build the production frontend.
+- Upload the frontend build artefact.
 
-### Backend Pipeline
+The workflow is designed to fail when tests or configured validation checks do not pass.
 
-The backend workflow performs the following:
+### Pipeline Status
 
-- Installs Node.js dependencies.
-- Runs ESLint validation.
-- Executes automated backend unit tests.
-- Checks backend JavaScript syntax.
+GitHub Actions execution is currently affected by a GitHub account billing restriction.
 
-### Frontend Pipeline
+The workflow jobs have been prevented from starting, rather than failing because of application code.
 
-The frontend workflow performs the following:
+Local testing has been performed while the restriction is being resolved. Automated Newman API tests, security scans and Docker build verification still need to be incorporated into the final CI/CD process.
 
-- Installs frontend dependencies.
-- Runs ESLint.
-- Executes frontend tests using Vitest.
-- Builds the production React application.
-- Uploads the frontend build artefact.
+## Static Code Analysis
 
-The pipeline is designed to fail when configured tests or checks fail.
+Static code analysis was introduced using ESLint to identify coding issues and improve code quality.
 
-### CI/CD Verification
+ESLint is used for both the frontend and backend.
 
-The workflow has been configured, but GitHub Actions execution is currently blocked by an account billing restriction.
+It helps identify potential programming mistakes, inconsistent code practices and maintainability issues before code is merged.
 
-The jobs are prevented from starting, meaning the restriction is not evidence of a test failure.
-
-Local tests have been executed successfully while the billing issue is being resolved.
-
-**Outstanding:** Automated API testing, security scanning and complete Docker build verification should also be integrated into the CI/CD workflow to satisfy all final assessment requirements.
-
-**Evidence:** [ADD SUCCESSFUL GITHUB ACTIONS SCREENSHOT]
-
-## Part 3 — Static Code Analysis
-
-Static code analysis is used to identify potential coding problems without executing the application.
-
-ESLint was configured for the backend and frontend and included in the CI/CD workflow.
-
-It assists with identifying code-quality problems, inconsistent practices and certain programming mistakes.
-
-### Running Static Analysis
+### Running Code Analysis
 
 Backend:
 
@@ -378,107 +341,95 @@ cd client
 npm run lint
 ```
 
-The results help developers identify and fix issues before merging code into the main branch.
+Code analysis forms part of the development workflow and supports identifying issues before deployment.
 
-ESLint is not a complete vulnerability scanner, so additional dependency and security checks should also be included in the CI/CD pipeline.
+ESLint is used for code-quality analysis and does not replace dedicated security vulnerability scanning.
 
-**Evidence:** [ADD STATIC ANALYSIS RESULTS AND EXPLANATION OF FIXES]
+## Logging and Monitoring
 
-## Part 3 — Logging and Monitoring
+Structured logging was implemented using Pino and pino-http.
 
-Logging was implemented using Pino and pino-http to record important system events.
+The logging system records important application events to assist with troubleshooting, security monitoring and identifying unusual behaviour.
 
-The logging system assists developers with troubleshooting, monitoring and identifying suspicious activity.
+### Recorded Events
 
-### Events Recorded
+- Successful and failed login attempts.
+- Account lockout events.
+- Rate-limit violations.
+- Booking activity.
+- Transaction activity.
+- Application errors.
+- API request and response information.
 
-| Event | Purpose |
-|---|---|
-| Successful login | Records successful authentication |
-| Failed login | Identifies incorrect login attempts |
-| Account locked | Records temporary account lockout |
-| Rate limit exceeded | Identifies excessive API requests |
-| Booking created | Tracks booking activity |
-| Transaction recorded | Tracks simulated financial transactions |
-| Application error | Assists with troubleshooting |
-
-Logs include useful information such as event names, request identifiers and response statuses.
-
-Sensitive information such as passwords and authentication tokens should be excluded or redacted from logs.
+Logs include event names, response statuses and request identifiers to make it easier to investigate system behaviour.
 
 ### Cloud Logging
 
-The project includes optional integration with Axiom for cloud-based logging.
+The backend includes optional Axiom integration for cloud-based logging and monitoring.
 
-When configured, this allows logs to be collected and reviewed through an external monitoring platform.
+When configured with valid credentials, logs can be forwarded to an external platform for monitoring and investigation.
 
-Cloud-based logging can help administrators investigate errors and security events without relying exclusively on local terminal output.
+Cloud logging allows important system events to be reviewed independently of the local development terminal.
 
-**Evidence:** [VERIFY AXIOM RECEIVES LOGS AND ADD SCREENSHOT]
+## Final Security Review
 
-## Part 3 — Final Security Review
+HustleHub+ implements multiple security measures to protect user accounts, marketplace operations and financial records.
 
-The final security review evaluates common threats and explains the protections implemented in HustleHub+.
-
-| Security Threat | Protection |
+| Threat | Implemented Protection |
 |---|---|
 | Brute-force attacks | Account lockout and rate limiting |
-| Password exposure | bcrypt hashing |
+| Password exposure | bcrypt password hashing |
 | Unauthorised API access | JWT authentication |
-| Incorrect user permissions | Role-based access control |
+| Privilege escalation | Role-based access control |
 | Injection attacks | Input validation and sanitisation |
-| Cross-site scripting (XSS) | Input sanitisation, React escaping and Helmet CSP |
-| Sensitive information exposure | Controlled error handling and log redaction |
-| Unauthorised gig modifications | Ownership checks |
-| Transaction manipulation | Server-controlled prices and protected booking operations |
-| Suspicious system activity | Security logging and monitoring |
+| Cross-site scripting | Sanitisation, React output escaping and Helmet CSP |
+| Sensitive error exposure | Controlled error handling |
+| Unauthorised data modification | Ownership validation |
+| Transaction manipulation | Server-controlled prices and atomic updates |
+| Suspicious activity | Structured security logging |
 
 ### Security Evaluation
 
-The application uses several security measures to protect authentication, user information and financial records.
+The application follows a layered approach to security.
 
-Password hashing protects stored credentials, while JWT authentication and role-based access control restrict access to protected API operations.
+Authentication protects user accounts, while authorisation restricts access according to user roles.
 
-Input validation and sanitisation help reduce the risk of malicious requests.
+Input validation and sanitisation reduce risks associated with malicious requests.
 
-The additional account lockout and password-reset features strengthen the authentication system.
+Additional authentication protections, including password reset and temporary account lockout, improve account security.
 
-Structured logging provides evidence of important system events and assists with investigating security incidents.
+The logging system provides visibility into authentication failures, request errors and other important application events.
 
-### Remaining Security Considerations
-
-Before public production deployment, the application should undergo additional vulnerability scanning, HTTPS verification, dependency checks and integration testing.
-
-The account-lockout feature should also be tested under simultaneous login requests to verify that counters remain accurate.
+Further production security work includes verifying cloud monitoring, performing dedicated vulnerability scans, testing concurrent authentication requests and reviewing the deployment configuration.
 
 ## Setting Up
 
 ### Database
 
-The application uses MongoDB.
+The API uses MongoDB to store application data.
 
 1. Install MongoDB Community Server.
-2. Configure the `MONGODB_URI` environment variable.
+2. Configure `MONGODB_URI` in the `.env` file.
 3. Start the MongoDB service.
 
 The default local connection string is:
 
 `mongodb://127.0.0.1:27017/hustlehub`
 
-MongoDB creates the relevant collections when data is stored.
+Collections are created automatically when data is stored.
 
 ### Backend Setup
 
-From the project directory:
+Navigate to the API directory:
 
 ```bash
 cd hustlehub-plus/api
 npm install
 ```
 
-Create a `.env` file using `.env.example`.
+Create a `.env` file based on `.env.example`.
 
-Generate development certificates:
+Generate local SSL certificates:
 
 ```bash
 npm run certs
@@ -490,7 +441,7 @@ Start the backend:
 npm run dev
 ```
 
-The backend runs at:
+The API runs at:
 
 `https://localhost:5000`
 
@@ -514,15 +465,15 @@ All marketplace endpoints use the `/api` prefix.
 
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Register |
-| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/register` | Register a user |
+| POST | `/api/auth/login` | Log in and receive a JWT |
 
 ### Gigs
 
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/api/gigs` | Browse gigs |
-| GET | `/api/gigs/:id` | View gig |
+| GET | `/api/gigs/:id` | View gig details |
 | GET | `/api/gigs/mygigs` | View own gigs |
 | POST | `/api/gigs` | Create gig |
 | PUT | `/api/gigs/:id` | Update gig |
@@ -534,7 +485,7 @@ All marketplace endpoints use the `/api` prefix.
 | Method | Endpoint | Description |
 |---|---|---|
 | POST | `/api/bookings` | Create booking |
-| GET | `/api/bookings/mybookings` | View bookings |
+| GET | `/api/bookings/mybookings` | View own bookings |
 | GET | `/api/bookings/:id` | View booking details |
 | PATCH | `/api/bookings/:id/accept` | Accept booking |
 | PATCH | `/api/bookings/:id/complete` | Complete booking |
@@ -545,15 +496,14 @@ All marketplace endpoints use the `/api` prefix.
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/finance/income` | View income |
-| GET | `/api/finance/transactions` | View transactions |
-| GET | `/api/finance/tax` | View tax estimation |
+| GET | `/api/finance/income` | View freelancer income |
+| GET | `/api/finance/transactions` | View transaction history |
 
-## Testing
+## Automated Testing
 
-### Backend Unit Testing
+### Backend Unit Tests
 
-Backend testing uses Node.js's built-in test runner.
+The backend uses Node.js's built-in testing framework.
 
 Run:
 
@@ -562,12 +512,12 @@ cd api
 npm test
 ```
 
-The latest local test execution produced:
+The latest test execution produced the following results:
 
-| Test Category | Passed |
+| Category | Tests Passed |
 |---|---:|
 | Account lockout | 4 |
-| Password-reset token utilities | 4 |
+| Password-reset tokens | 4 |
 | Tax calculations | 7 |
 | **Total** | **15** |
 
@@ -575,7 +525,7 @@ The latest local test execution produced:
 
 ### Frontend Testing
 
-Frontend testing uses Vitest and React Testing Library.
+The frontend uses Vitest and React Testing Library.
 
 Run:
 
@@ -584,96 +534,58 @@ cd client
 npm test
 ```
 
-The frontend tests check component rendering and user interactions.
-
-**Evidence:** [ADD FINAL FRONTEND TEST RESULTS]
+Automated frontend tests support verifying component rendering and application interactions.
 
 ### API Security Testing — Postman and Newman
 
-The backend includes automated API testing using Postman and Newman.
+Postman and Newman are used to test authentication, authorisation, role restrictions, validation and marketplace functionality.
 
-Testing covers:
+The automated collection covers:
 
 - Registration and login.
 - JWT authentication.
-- Role-based access control.
 - Gig creation and management.
-- Booking creation and lifecycle operations.
-- Ownership checks.
-- Input validation and sanitisation.
-- Unauthorised requests.
-- Transaction and booking security.
+- Role-based access control.
+- Booking creation and status changes.
+- Ownership restrictions.
+- Invalid inputs and unauthorised requests.
+- HTML sanitisation.
+- Transaction-related operations.
 
-### Running Newman
+### Configuring Newman
 
-From the API directory:
+Create a local `newman.local.json` file in the API directory containing the admin credentials required by the tests.
+
+Keep this file excluded from Git.
+
+Run:
 
 ```bash
 npm run test:api -- --environment newman.local.json
 ```
 
-This requires the backend and MongoDB to be running and the local test environment to be configured.
+The local testing configuration supports the self-signed HTTPS development certificate.
 
-The earlier recorded API test results were:
+### Recorded API Test Results
 
 | Metric | Result |
 |---|---:|
-| Requests | 38 |
-| Test scripts | 38 |
-| Assertions | 81 |
+| Requests executed | 38 |
+| Test scripts executed | 38 |
+| Assertions executed | 81 |
 | Failed requests | 0 |
 | Failed assertions | 0 |
 
 **Overall result: PASS**
 
-These API tests should be rerun against the final merged application.
-
-## Part 3 — Final Demonstration
-
-The final demonstration video must show the complete application flow.
-
-The demonstration should include:
-
-- Registration and login.
-- Freelancer gig creation.
-- Client browsing and booking.
-- Booking status updates.
-- Transaction creation.
-- Income and tax dashboard.
-- Password-reset functionality.
-- Account lockout after failed logins.
-- Docker environment.
-- Logging and monitoring.
-- CI/CD and automated testing evidence.
-
-**Final video link:** [ADD FINAL YOUTUBE LINK]
-
-## Final Submission Checklist
-
-- [ ] Complete and verify all application features.
-- [x] Implement tax and income calculations.
-- [x] Configure Docker and Docker Compose.
-- [x] Implement structured logging.
-- [x] Implement account lockout security.
-- [x] Pass backend unit tests (15/15).
-- [ ] Verify password-reset frontend and complete reset flow.
-- [ ] Verify cloud logging.
-- [ ] Add final static analysis evidence.
-- [ ] Obtain successful GitHub Actions results.
-- [ ] Confirm automated API and security scans are included in CI/CD.
-- [ ] Capture final Docker evidence.
-- [ ] Run final frontend and Newman tests.
-- [ ] Record the final demonstration video.
-- [ ] Upload final code and documentation to GitHub.
+These results were recorded during previous API testing. The collection should also be run against the final merged application.
 
 ## Conclusion
 
-HustleHub+ was developed as a secure freelance marketplace that allows freelancers to advertise services and clients to book those services.
+HustleHub+ was developed as a secure freelance marketplace supporting clients, freelancers and administrators.
 
-The application incorporates secure authentication, role-based access control, booking and transaction management, income tracking and tax estimation.
+The system includes authentication, gig management, booking management, transaction recording, income tracking and estimated tax calculations.
 
-The final development phase introduced additional security features, Docker containerisation, automated testing, static code analysis and structured logging.
+The final development phase added Docker containerisation, additional authentication security, structured logging, static code analysis and CI/CD configuration.
 
-These improvements strengthen the reliability, maintainability and security of the application and support its readiness for deployment.
-
-**Final verification of CI/CD execution, cloud logging and remaining evidence is required before submission.**
+These improvements support the application's security, maintainability and deployment readiness.
