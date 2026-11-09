@@ -6,7 +6,7 @@ Part 1 focused on developing a secure backend API for registration and authentic
 
 ## YouTube Video Link
 
-https://youtu.be/LPHy-0MfQyg
+https://www.youtube.com/watch?v=TaaVS4qXaLY 
 
 ## Group Members
 
