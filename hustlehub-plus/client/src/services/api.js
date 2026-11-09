@@ -3,6 +3,8 @@ const BASE = "/api";
 export const routes = {
   register: "/auth/register",
   login: "/auth/login",
+  forgotPassword: "/auth/forgot-password",
+  resetPassword: "/auth/reset-password",
 
   me: "/users/me",
 

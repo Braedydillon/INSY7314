@@ -1,51 +1,48 @@
-
-import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext.jsx'
-import { api, routes } from '../services/api.js'
-import { homeForRole } from '../utils/format.js'
-import { Alert, Field } from '../components/UI.jsx'
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
+import { api, routes } from "../services/api.js";
+import { homeForRole } from "../utils/format.js";
+import { Alert, Field } from "../components/UI.jsx";
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   async function submit(event) {
-    event.preventDefault()
-    setError(null)
-    setLoading(true)
+    event.preventDefault();
+    setError(null);
+    setLoading(true);
 
     try {
       const data = await api.post(routes.login, {
         email: email.trim().toLowerCase(),
-        password
-      })
+        password,
+      });
 
-      const token = data.token || data.accessToken
+      const token = data.token || data.accessToken;
       const user = data.user || {
         id: data.id || data._id,
         email: data.email,
         role: data.role,
-        displayName: data.displayName
-      }
+        displayName: data.displayName,
+      };
 
-      login(token, user)
+      login(token, user);
 
-      navigate(
-        location.state?.from?.pathname ||
-        homeForRole(user.role),
-        { replace: true }
-      )
+      navigate(location.state?.from?.pathname || homeForRole(user.role), {
+        replace: true,
+      });
     } catch (err) {
-      setError(err)
+      setError(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -53,27 +50,24 @@ export default function Login() {
     <div className="auth-layout">
       <section className="auth-intro">
         <p className="eyebrow">HUSTLEHUB PLUS</p>
-        <h1>Welcome <em>back.</em></h1>
-        <p>
-          Log in to manage your gigs,
-          bookings and account.
-        </p>
+        <h1>
+          Welcome <em>back.</em>
+        </h1>
+        <p>Log in to manage your gigs, bookings and account.</p>
       </section>
 
       <section className="form-panel">
         <h2>Log In</h2>
 
         <p className="text-muted">
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?{" "}
           <Link to="/register" className="text-link">
             Register
           </Link>
         </p>
 
         {location.state?.message && (
-          <Alert kind="success">
-            {location.state.message}
-          </Alert>
+          <Alert kind="success">{location.state.message}</Alert>
         )}
 
         <Alert error={error} />
@@ -84,7 +78,7 @@ export default function Login() {
               id="email"
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               required
             />
@@ -95,21 +89,27 @@ export default function Login() {
               id="password"
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
             />
           </Field>
+
+          <p className="form-link">
+            <Link to="/forgot-password" className="text-link">
+              Forgot your password?
+            </Link>
+          </p>
 
           <button
             className="btn btn-primary btn-block"
             type="submit"
             disabled={loading}
           >
-            {loading ? 'Logging in...' : 'Log In'}
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
       </section>
     </div>
-  )
+  );
 }

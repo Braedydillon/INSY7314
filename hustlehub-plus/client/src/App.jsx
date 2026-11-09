@@ -10,6 +10,8 @@ import Gigs from "./pages/Gigs.jsx";
 import GigDetails from "./pages/GigDetails.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 import Booking from "./pages/Booking.jsx";
 import MyBookings from "./pages/MyBookings.jsx";
 import DashboardGigs from "./pages/DashboardGigs.jsx";
@@ -68,6 +70,17 @@ export default function App() {
             </GuestOnly>
           }
         />
+
+        <Route
+          path="/forgot-password"
+          element={
+            <GuestOnly>
+              <ForgotPassword />
+            </GuestOnly>
+          }
+        />
+
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Main application */}
         <Route
