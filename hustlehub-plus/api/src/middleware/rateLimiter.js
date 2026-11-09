@@ -17,6 +17,7 @@ const limits = [
   config.LOGIN_RATE_LIMIT,
   config.REGISTER_RATE_LIMIT,
   config.BOOKING_RATE_LIMIT,
+  config.PASSWORD_RESET_RATE_LIMIT,
 ];
 
 if (!limits.every((value) => Number.isSafeInteger(value) && value > 0)) {
@@ -54,5 +55,16 @@ export const bookingLimiter = rateLimit({
   handler: logLimit('booking'),
   message: {
     error: `Too many booking requests. Please try again in ${windowMinutes} minutes.`,
+  },
+});
+
+export const passwordResetLimiter = rateLimit({
+  windowMs,
+  limit: config.PASSWORD_RESET_RATE_LIMIT,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  handler: logLimit('password_reset'),
+  message: {
+    error: `Too many password reset requests. Please try again in ${windowMinutes} minutes.`,
   },
 });

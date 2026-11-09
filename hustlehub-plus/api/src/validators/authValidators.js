@@ -1,18 +1,8 @@
 import { body } from 'express-validator';
 import { stripHtml } from '../middleware/sanitizers.js';
 
-export const registerRules = [
-  body('email')
-    .isString()
-    .notEmpty()
-    .withMessage('Please enter an email address.')
-    .bail()
-    .trim()
-    .isEmail()
-    .withMessage('Email format is invalid.')
-    .normalizeEmail(),
-
-  body('password')
+const passwordRule = (field) =>
+  body(field)
     .isString()
     .notEmpty()
     .withMessage('Please enter a password')
@@ -26,7 +16,20 @@ export const registerRules = [
     })
     .withMessage(
       'Password must be 12 characters minimum and include 1 symbol, number, uppercase, and lowercase character'
-    ),
+    );
+
+export const registerRules = [
+  body('email')
+    .isString()
+    .notEmpty()
+    .withMessage('Please enter an email address.')
+    .bail()
+    .trim()
+    .isEmail()
+    .withMessage('Email format is invalid.')
+    .normalizeEmail(),
+
+  passwordRule('password'),
 
   stripHtml('name'),
   body('name')
@@ -89,4 +92,24 @@ export const loginRules = [
     .bail()
     .notEmpty()
     .withMessage('Password is required'),
+];
+
+export const forgotPasswordRules = [
+  body('email')
+    .isString()
+    .withMessage('Please enter an email address.')
+    .bail()
+    .trim()
+    .isEmail()
+    .withMessage('Email format is invalid.')
+    .normalizeEmail(),
+];
+
+export const resetPasswordRules = [
+  body('token')
+    .isString()
+    .matches(/^[0-9a-f]{64}$/)
+    .withMessage('This reset link is invalid or has expired.'),
+
+  passwordRule('password'),
 ];
